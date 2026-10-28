@@ -5,7 +5,7 @@ VisualStudioVersion = 17.14.37806.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoPolitics Game", "GeoPolitics Game.csproj", "{EA4A4B5D-2180-4E3B-8F06-DA3FC92001C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoPolitics_Game.Tests", "..\GeoPolitics_Game.Tests\GeoPolitics_Game.Tests.csproj", "{E8BC18C2-1605-45F4-A90B-443CCDD7336D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoPolitics_Game.Tests", "Tests\GeoPolitics_Game.Tests\GeoPolitics_Game.Tests.csproj", "{556D9BF8-EA3D-20C1-0BB0-7BF0D1DD79FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{EA4A4B5D-2180-4E3B-8F06-DA3FC92001C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA4A4B5D-2180-4E3B-8F06-DA3FC92001C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA4A4B5D-2180-4E3B-8F06-DA3FC92001C4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E8BC18C2-1605-45F4-A90B-443CCDD7336D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E8BC18C2-1605-45F4-A90B-443CCDD7336D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E8BC18C2-1605-45F4-A90B-443CCDD7336D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E8BC18C2-1605-45F4-A90B-443CCDD7336D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{556D9BF8-EA3D-20C1-0BB0-7BF0D1DD79FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{556D9BF8-EA3D-20C1-0BB0-7BF0D1DD79FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{556D9BF8-EA3D-20C1-0BB0-7BF0D1DD79FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{556D9BF8-EA3D-20C1-0BB0-7BF0D1DD79FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
