@@ -24,11 +24,11 @@ using (var scope = app.Services.CreateScope())
     try
     {
         mongo.Database.RunCommand<BsonDocument>(new BsonDocument("ping", 1));
-        app.Logger.LogInformation("? Connected to MongoDB Atlas");
+        app.Logger.LogInformation("[OK] Connected to MongoDB Atlas");
     }
     catch (Exception ex)
     {
-        app.Logger.LogError(ex, "? Could not connect to MongoDB");
+        app.Logger.LogError(ex, "[FAILED] Could not connect to MongoDB");
     }
 }
 
