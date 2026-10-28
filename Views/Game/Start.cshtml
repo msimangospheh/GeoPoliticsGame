@@ -1,0 +1,89 @@
+﻿@model GeoPolitics_Game.Models.GameState
+
+@{
+    ViewData["Title"] = "Geopolitics Command Center";
+}
+
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="display-5 fw-bold text-dark">GEOPOLITICS: THE IMPERIAL STRUGGLE</h1>
+            <p class="lead text-muted">Commander: <strong>@Model.PlayerName</strong> | Current Round: <strong>@Model.CurrentRound</strong></p>
+        </div>
+        <div class="col-md-4 text-end">
+            <button class="btn btn-danger btn-lg shadow-sm">Attack Phase</button>
+        </div>
+    </div>
+
+    <!-- Attack Form Action Panel -->
+    <div class="card shadow-sm mb-4 bg-light">
+        <div class="card-body">
+            <h5 class="card-title">Execute Attack</h5>
+            <form asp-action="Attack" method="post" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Select Your Attacking Country:</label>
+                    <select name="attackerCountry" class="form-select">
+                        @foreach (var country in Model.Countries.Where(c => c.OwnerId == Model.PlayerName))
+                        {
+                            <option value="@country.Name">@country.Name (@country.SoldierCount soldiers)</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Select Target Country:</label>
+                    <select name="targetCountry" class="form-select">
+                        @foreach (var country in Model.Countries.Where(c => c.OwnerId != Model.PlayerName))
+                        {
+                            <option value="@country.Name">@country.Name (@country.SoldierCount soldiers - @country.OwnerId)</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-danger w-100 fw-bold">⚔️ LAUNCH ATTACK</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Game Board Grid -->
+    <div class="row">
+        <!-- Left Column: Territory Status List -->
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Global Territory Status</h5>
+                </div>
+                <ul class="list-group list-group-flush" style="max-height: 400px; overflow-y: auto;">
+                    @foreach (var country in Model.Countries)
+                    {
+                        var badgeColor = country.OwnerId == Model.PlayerName ? "bg-success" : "bg-secondary";
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>@country.Name</strong><br />
+                                <small class="text-muted">Owner: @country.OwnerId</small>
+                            </div>
+                            <span class="badge @badgeColor rounded-pill fs-6">@country.SoldierCount 🪖</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+
+        <!-- Right Column: Live Game Log & Commentary -->
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">War Council Ledger & AI Commentary</h5>
+                </div>
+                <div class="card-body bg-light" style="height: 400px; overflow-y: auto;">
+                    @foreach (var log in Model.BattleLogs)
+                    {
+                        <div class="alert alert-dark py-2 mb-2" role="alert">
+                            <small>@log</small>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
