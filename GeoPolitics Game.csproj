@@ -1,16 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-	<TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>GeoPolitics_Game</RootNamespace>
-    <UserSecretsId>29ee05cc-0ca0-43ff-a803-0cc807719e0b</UserSecretsId>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<RootNamespace>GeoPolitics_Game</RootNamespace>
+		<UserSecretsId>29ee05cc-0ca0-43ff-a803-0cc807719e0b</UserSecretsId>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AspNetCore.Identity.MongoDbCore" Version="7.0.0" />
-    <PackageReference Include="MongoDB.Driver" Version="3.13.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AspNetCore.Identity.MongoDbCore" Version="7.0.0" />
+		<PackageReference Include="MongoDB.Driver" Version="3.13.0" />
+	</ItemGroup>
 
+	<!-- Copy the country data next to the app on every build -->
+	<ItemGroup>
+		<None Update="Data\Seed\countries.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+	<!-- Old prototype files: kept on disk for reference, not compiled -->
+	<ItemGroup>
+		<Compile Remove="Services\GameEngineService.cs" />
+		<Compile Remove="Services\NpcAIService.cs" />
+		<Compile Remove="Controllers\GameController.cs" />
+		<Content Remove="Views\Game\Setup.cshtml" />
+		<Content Remove="Views\Game\Start.cshtml" />
+		<None Include="Services\GameEngineService.cs" />
+		<None Include="Services\NpcAIService.cs" />
+		<None Include="Controllers\GameController.cs" />
+		<None Include="Views\Game\Setup.cshtml" />
+		<None Include="Views\Game\Start.cshtml" />
+	</ItemGroup>
 </Project>

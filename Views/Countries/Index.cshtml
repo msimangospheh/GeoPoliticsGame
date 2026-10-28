@@ -1,0 +1,28 @@
+﻿@model List<GeoPolitics_Game.Models.Country>
+@{
+    ViewData["Title"] = "Countries of the World";
+}
+
+<h2>Countries of the World (@Model.Count)</h2>
+
+<form method="get" class="mb-3 d-flex gap-2">
+    <input name="search" value="@ViewData["Search"]" class="form-control" placeholder="Search countries..." />
+    <button class="btn btn-primary">Search</button>
+</form>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr><th>Flag</th><th>Country</th><th>Population</th><th>Soldiers</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var c in Model)
+        {
+            <tr>
+                <td><img src="@c.FlagUrl" alt="@c.Name flag" width="40" loading="lazy" /></td>
+                <td>@c.Name</td>
+                <td>@c.PopulationLabel</td>
+                <td>@c.SoldierValue</td>
+            </tr>
+        }
+    </tbody>
+</table>

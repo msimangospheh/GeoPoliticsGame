@@ -1,50 +1,51 @@
-using GeoPolitics_Game.Services;
 using GeoPolitics_Game.Data;
+using GeoPolitics_Game.Data.Repositories;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
+MongoConventions.Register();   // must run BEFORE anything touches MongoDB
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Read the "MongoDb" settings and make MongoContext available everywhere
-builder.Services.Configure<MongoSettings>(builder.Configuration.GetSection("MongoDb"));
-builder.Services.AddSingleton<MongoContext>();
-
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddSingleton<GameEngineService>();
-builder.Services.AddSingleton<NpcAIService>(); // Add this line
+// ---- Database layer ----
+builder.Services.Configure<MongoSettings>(builder.Configuration.GetSection("MongoDb"));
+builder.Services.AddSingleton<MongoContext>();
+builder.Services.AddScoped<ICountryRepository, MongoCountryRepository>();
+builder.Services.AddScoped<IGameRepository, MongoGameRepository>();
+builder.Services.AddScoped<IGameEventRepository, MongoGameEventRepository>();
+builder.Services.AddScoped<DatabaseSeeder>();
 
 var app = builder.Build();
 
-// Startup check: ping the database so we know the connection works
+// ---- Startup: check the connection, then seed data ----
 using (var scope = app.Services.CreateScope())
 {
-    var mongo = scope.ServiceProvider.GetRequiredService<MongoContext>();
     try
     {
+        var mongo = scope.ServiceProvider.GetRequiredService<MongoContext>();
         mongo.Database.RunCommand<BsonDocument>(new BsonDocument("ping", 1));
         app.Logger.LogInformation("[OK] Connected to MongoDB Atlas");
+
+        var seeder = scope.ServiceProvider.GetRequiredService<DatabaseSeeder>();
+        await seeder.SeedAsync();
     }
     catch (Exception ex)
     {
-        app.Logger.LogError(ex, "[FAILED] Could not connect to MongoDB");
+        app.Logger.LogError(ex, "[FAILED] MongoDB startup failed");
     }
 }
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
 
 app.MapControllerRoute(

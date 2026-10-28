@@ -1,0 +1,1406 @@
+[
+  {
+    "code": "IN",
+    "name": "India",
+    "population": 1476625576,
+    "soldierValue": 9
+  },
+  {
+    "code": "CN",
+    "name": "China",
+    "population": 1412914089,
+    "soldierValue": 9
+  },
+  {
+    "code": "US",
+    "name": "United States",
+    "population": 349035494,
+    "soldierValue": 9
+  },
+  {
+    "code": "ID",
+    "name": "Indonesia",
+    "population": 287886782,
+    "soldierValue": 9
+  },
+  {
+    "code": "PK",
+    "name": "Pakistan",
+    "population": 259299791,
+    "soldierValue": 9
+  },
+  {
+    "code": "NG",
+    "name": "Nigeria",
+    "population": 242431832,
+    "soldierValue": 9
+  },
+  {
+    "code": "BR",
+    "name": "Brazil",
+    "population": 213562666,
+    "soldierValue": 9
+  },
+  {
+    "code": "BD",
+    "name": "Bangladesh",
+    "population": 177818044,
+    "soldierValue": 9
+  },
+  {
+    "code": "RU",
+    "name": "Russia",
+    "population": 143394458,
+    "soldierValue": 8
+  },
+  {
+    "code": "ET",
+    "name": "Ethiopia",
+    "population": 138902185,
+    "soldierValue": 8
+  },
+  {
+    "code": "MX",
+    "name": "Mexico",
+    "population": 132997658,
+    "soldierValue": 8
+  },
+  {
+    "code": "JP",
+    "name": "Japan",
+    "population": 122427731,
+    "soldierValue": 7
+  },
+  {
+    "code": "EG",
+    "name": "Egypt",
+    "population": 120101175,
+    "soldierValue": 7
+  },
+  {
+    "code": "PH",
+    "name": "Philippines",
+    "population": 117724471,
+    "soldierValue": 7
+  },
+  {
+    "code": "CD",
+    "name": "DR Congo",
+    "population": 116452162,
+    "soldierValue": 7
+  },
+  {
+    "code": "VN",
+    "name": "Vietnam",
+    "population": 102177431,
+    "soldierValue": 7
+  },
+  {
+    "code": "IR",
+    "name": "Iran",
+    "population": 93168497,
+    "soldierValue": 6
+  },
+  {
+    "code": "TR",
+    "name": "Turkey",
+    "population": 87926082,
+    "soldierValue": 6
+  },
+  {
+    "code": "DE",
+    "name": "Germany",
+    "population": 83644258,
+    "soldierValue": 6
+  },
+  {
+    "code": "TZ",
+    "name": "Tanzania",
+    "population": 72563780,
+    "soldierValue": 5
+  },
+  {
+    "code": "TH",
+    "name": "Thailand",
+    "population": 71559614,
+    "soldierValue": 5
+  },
+  {
+    "code": "GB",
+    "name": "United Kingdom",
+    "population": 69931528,
+    "soldierValue": 5
+  },
+  {
+    "code": "FR",
+    "name": "France",
+    "population": 66746401,
+    "soldierValue": 5
+  },
+  {
+    "code": "ZA",
+    "name": "South Africa",
+    "population": 65453084,
+    "soldierValue": 5
+  },
+  {
+    "code": "IT",
+    "name": "Italy",
+    "population": 58926166,
+    "soldierValue": 5
+  },
+  {
+    "code": "KE",
+    "name": "Kenya",
+    "population": 58636412,
+    "soldierValue": 5
+  },
+  {
+    "code": "MM",
+    "name": "Myanmar",
+    "population": 55184819,
+    "soldierValue": 5
+  },
+  {
+    "code": "CO",
+    "name": "Colombia",
+    "population": 53936226,
+    "soldierValue": 5
+  },
+  {
+    "code": "SD",
+    "name": "Sudan",
+    "population": 53282719,
+    "soldierValue": 5
+  },
+  {
+    "code": "UG",
+    "name": "Uganda",
+    "population": 52761469,
+    "soldierValue": 5
+  },
+  {
+    "code": "KR",
+    "name": "South Korea",
+    "population": 51600388,
+    "soldierValue": 5
+  },
+  {
+    "code": "DZ",
+    "name": "Algeria",
+    "population": 48028334,
+    "soldierValue": 4
+  },
+  {
+    "code": "IQ",
+    "name": "Iraq",
+    "population": 48007437,
+    "soldierValue": 4
+  },
+  {
+    "code": "ES",
+    "name": "Spain",
+    "population": 47850793,
+    "soldierValue": 4
+  },
+  {
+    "code": "AR",
+    "name": "Argentina",
+    "population": 46003734,
+    "soldierValue": 4
+  },
+  {
+    "code": "AF",
+    "name": "Afghanistan",
+    "population": 45047069,
+    "soldierValue": 4
+  },
+  {
+    "code": "YE",
+    "name": "Yemen",
+    "population": 42961653,
+    "soldierValue": 4
+  },
+  {
+    "code": "CA",
+    "name": "Canada",
+    "population": 40467728,
+    "soldierValue": 4
+  },
+  {
+    "code": "AO",
+    "name": "Angola",
+    "population": 40215179,
+    "soldierValue": 4
+  },
+  {
+    "code": "UA",
+    "name": "Ukraine",
+    "population": 39535849,
+    "soldierValue": 4
+  },
+  {
+    "code": "MA",
+    "name": "Morocco",
+    "population": 38762441,
+    "soldierValue": 4
+  },
+  {
+    "code": "PL",
+    "name": "Poland",
+    "population": 37843188,
+    "soldierValue": 4
+  },
+  {
+    "code": "UZ",
+    "name": "Uzbekistan",
+    "population": 37724223,
+    "soldierValue": 4
+  },
+  {
+    "code": "MZ",
+    "name": "Mozambique",
+    "population": 36639851,
+    "soldierValue": 4
+  },
+  {
+    "code": "MY",
+    "name": "Malaysia",
+    "population": 36385115,
+    "soldierValue": 4
+  },
+  {
+    "code": "GH",
+    "name": "Ghana",
+    "population": 35697557,
+    "soldierValue": 4
+  },
+  {
+    "code": "SA",
+    "name": "Saudi Arabia",
+    "population": 35165787,
+    "soldierValue": 4
+  },
+  {
+    "code": "PE",
+    "name": "Peru",
+    "population": 34922148,
+    "soldierValue": 4
+  },
+  {
+    "code": "MG",
+    "name": "Madagascar",
+    "population": 33522052,
+    "soldierValue": 4
+  },
+  {
+    "code": "CI",
+    "name": "Côte d'Ivoire",
+    "population": 33494346,
+    "soldierValue": 4
+  },
+  {
+    "code": "CM",
+    "name": "Cameroon",
+    "population": 30640817,
+    "soldierValue": 4
+  },
+  {
+    "code": "NP",
+    "name": "Nepal",
+    "population": 29629410,
+    "soldierValue": 4
+  },
+  {
+    "code": "NE",
+    "name": "Niger",
+    "population": 28814878,
+    "soldierValue": 4
+  },
+  {
+    "code": "VE",
+    "name": "Venezuela",
+    "population": 28633711,
+    "soldierValue": 4
+  },
+  {
+    "code": "AU",
+    "name": "Australia",
+    "population": 27227096,
+    "soldierValue": 4
+  },
+  {
+    "code": "KP",
+    "name": "North Korea",
+    "population": 26633691,
+    "soldierValue": 4
+  },
+  {
+    "code": "SY",
+    "name": "Syria",
+    "population": 26472497,
+    "soldierValue": 4
+  },
+  {
+    "code": "ML",
+    "name": "Mali",
+    "population": 25932275,
+    "soldierValue": 4
+  },
+  {
+    "code": "BF",
+    "name": "Burkina Faso",
+    "population": 24601700,
+    "soldierValue": 3
+  },
+  {
+    "code": "LK",
+    "name": "Sri Lanka",
+    "population": 23348315,
+    "soldierValue": 3
+  },
+  {
+    "code": "TW",
+    "name": "Taiwan",
+    "population": 23011292,
+    "soldierValue": 3
+  },
+  {
+    "code": "MW",
+    "name": "Malawi",
+    "population": 22785535,
+    "soldierValue": 3
+  },
+  {
+    "code": "ZM",
+    "name": "Zambia",
+    "population": 22521915,
+    "soldierValue": 3
+  },
+  {
+    "code": "TD",
+    "name": "Chad",
+    "population": 21560380,
+    "soldierValue": 3
+  },
+  {
+    "code": "KZ",
+    "name": "Kazakhstan",
+    "population": 21083626,
+    "soldierValue": 3
+  },
+  {
+    "code": "SO",
+    "name": "Somalia",
+    "population": 20305907,
+    "soldierValue": 3
+  },
+  {
+    "code": "CL",
+    "name": "Chile",
+    "population": 19945850,
+    "soldierValue": 3
+  },
+  {
+    "code": "SN",
+    "name": "Senegal",
+    "population": 19366548,
+    "soldierValue": 3
+  },
+  {
+    "code": "GT",
+    "name": "Guatemala",
+    "population": 18967978,
+    "soldierValue": 3
+  },
+  {
+    "code": "RO",
+    "name": "Romania",
+    "population": 18800605,
+    "soldierValue": 3
+  },
+  {
+    "code": "NL",
+    "name": "Netherlands",
+    "population": 18448775,
+    "soldierValue": 3
+  },
+  {
+    "code": "EC",
+    "name": "Ecuador",
+    "population": 18444506,
+    "soldierValue": 3
+  },
+  {
+    "code": "KH",
+    "name": "Cambodia",
+    "population": 18051219,
+    "soldierValue": 3
+  },
+  {
+    "code": "ZW",
+    "name": "Zimbabwe",
+    "population": 17273580,
+    "soldierValue": 3
+  },
+  {
+    "code": "GN",
+    "name": "Guinea",
+    "population": 15441993,
+    "soldierValue": 3
+  },
+  {
+    "code": "BJ",
+    "name": "Benin",
+    "population": 15170419,
+    "soldierValue": 3
+  },
+  {
+    "code": "RW",
+    "name": "Rwanda",
+    "population": 14889693,
+    "soldierValue": 3
+  },
+  {
+    "code": "BI",
+    "name": "Burundi",
+    "population": 14729157,
+    "soldierValue": 3
+  },
+  {
+    "code": "BO",
+    "name": "Bolivia",
+    "population": 12749291,
+    "soldierValue": 3
+  },
+  {
+    "code": "SS",
+    "name": "South Sudan",
+    "population": 12436037,
+    "soldierValue": 3
+  },
+  {
+    "code": "TN",
+    "name": "Tunisia",
+    "population": 12415138,
+    "soldierValue": 3
+  },
+  {
+    "code": "HT",
+    "name": "Haiti",
+    "population": 12037506,
+    "soldierValue": 3
+  },
+  {
+    "code": "BE",
+    "name": "Belgium",
+    "population": 11774642,
+    "soldierValue": 3
+  },
+  {
+    "code": "DO",
+    "name": "Dominican Republic",
+    "population": 11609500,
+    "soldierValue": 3
+  },
+  {
+    "code": "JO",
+    "name": "Jordan",
+    "population": 11589532,
+    "soldierValue": 3
+  },
+  {
+    "code": "AE",
+    "name": "United Arab Emirates",
+    "population": 11574682,
+    "soldierValue": 3
+  },
+  {
+    "code": "HN",
+    "name": "Honduras",
+    "population": 11184760,
+    "soldierValue": 3
+  },
+  {
+    "code": "TJ",
+    "name": "Tajikistan",
+    "population": 10978599,
+    "soldierValue": 3
+  },
+  {
+    "code": "PG",
+    "name": "Papua New Guinea",
+    "population": 10947848,
+    "soldierValue": 3
+  },
+  {
+    "code": "CU",
+    "name": "Cuba",
+    "population": 10892659,
+    "soldierValue": 3
+  },
+  {
+    "code": "SE",
+    "name": "Sweden",
+    "population": 10701047,
+    "soldierValue": 3
+  },
+  {
+    "code": "CZ",
+    "name": "Czechia",
+    "population": 10527781,
+    "soldierValue": 3
+  },
+  {
+    "code": "AZ",
+    "name": "Azerbaijan",
+    "population": 10454855,
+    "soldierValue": 3
+  },
+  {
+    "code": "PT",
+    "name": "Portugal",
+    "population": 10395362,
+    "soldierValue": 3
+  },
+  {
+    "code": "TG",
+    "name": "Togo",
+    "population": 9930918,
+    "soldierValue": 2
+  },
+  {
+    "code": "GR",
+    "name": "Greece",
+    "population": 9897115,
+    "soldierValue": 2
+  },
+  {
+    "code": "IL",
+    "name": "Israel",
+    "population": 9647689,
+    "soldierValue": 2
+  },
+  {
+    "code": "HU",
+    "name": "Hungary",
+    "population": 9585818,
+    "soldierValue": 2
+  },
+  {
+    "code": "AT",
+    "name": "Austria",
+    "population": 9107266,
+    "soldierValue": 2
+  },
+  {
+    "code": "CH",
+    "name": "Switzerland",
+    "population": 9007798,
+    "soldierValue": 2
+  },
+  {
+    "code": "SL",
+    "name": "Sierra Leone",
+    "population": 8996745,
+    "soldierValue": 2
+  },
+  {
+    "code": "BY",
+    "name": "Belarus",
+    "population": 8937018,
+    "soldierValue": 2
+  },
+  {
+    "code": "LA",
+    "name": "Laos",
+    "population": 7974017,
+    "soldierValue": 2
+  },
+  {
+    "code": "TM",
+    "name": "Turkmenistan",
+    "population": 7736632,
+    "soldierValue": 2
+  },
+  {
+    "code": "LY",
+    "name": "Libya",
+    "population": 7539851,
+    "soldierValue": 2
+  },
+  {
+    "code": "KG",
+    "name": "Kyrgyzstan",
+    "population": 7400465,
+    "soldierValue": 2
+  },
+  {
+    "code": "HK",
+    "name": "Hong Kong",
+    "population": 7378602,
+    "soldierValue": 2
+  },
+  {
+    "code": "NI",
+    "name": "Nicaragua",
+    "population": 7097329,
+    "soldierValue": 2
+  },
+  {
+    "code": "PY",
+    "name": "Paraguay",
+    "population": 7095279,
+    "soldierValue": 2
+  },
+  {
+    "code": "BG",
+    "name": "Bulgaria",
+    "population": 6667659,
+    "soldierValue": 2
+  },
+  {
+    "code": "RS",
+    "name": "Serbia",
+    "population": 6641964,
+    "soldierValue": 2
+  },
+  {
+    "code": "CG",
+    "name": "Congo",
+    "population": 6637785,
+    "soldierValue": 2
+  },
+  {
+    "code": "SV",
+    "name": "El Salvador",
+    "population": 6391253,
+    "soldierValue": 2
+  },
+  {
+    "code": "DK",
+    "name": "Denmark",
+    "population": 6023520,
+    "soldierValue": 2
+  },
+  {
+    "code": "SG",
+    "name": "Singapore",
+    "population": 5905748,
+    "soldierValue": 2
+  },
+  {
+    "code": "LB",
+    "name": "Lebanon",
+    "population": 5897467,
+    "soldierValue": 2
+  },
+  {
+    "code": "LR",
+    "name": "Liberia",
+    "population": 5853949,
+    "soldierValue": 2
+  },
+  {
+    "code": "CF",
+    "name": "Central African Republic",
+    "population": 5698984,
+    "soldierValue": 2
+  },
+  {
+    "code": "PS",
+    "name": "State of Palestine",
+    "population": 5692790,
+    "soldierValue": 2
+  },
+  {
+    "code": "OM",
+    "name": "Oman",
+    "population": 5671458,
+    "soldierValue": 2
+  },
+  {
+    "code": "NO",
+    "name": "Norway",
+    "population": 5652989,
+    "soldierValue": 2
+  },
+  {
+    "code": "FI",
+    "name": "Finland",
+    "population": 5621739,
+    "soldierValue": 2
+  },
+  {
+    "code": "MR",
+    "name": "Mauritania",
+    "population": 5461319,
+    "soldierValue": 2
+  },
+  {
+    "code": "SK",
+    "name": "Slovakia",
+    "population": 5451342,
+    "soldierValue": 2
+  },
+  {
+    "code": "IE",
+    "name": "Ireland",
+    "population": 5356950,
+    "soldierValue": 2
+  },
+  {
+    "code": "NZ",
+    "name": "New Zealand",
+    "population": 5287479,
+    "soldierValue": 2
+  },
+  {
+    "code": "CR",
+    "name": "Costa Rica",
+    "population": 5174789,
+    "soldierValue": 2
+  },
+  {
+    "code": "KW",
+    "name": "Kuwait",
+    "population": 5102773,
+    "soldierValue": 2
+  },
+  {
+    "code": "PA",
+    "name": "Panama",
+    "population": 4625718,
+    "soldierValue": 1
+  },
+  {
+    "code": "HR",
+    "name": "Croatia",
+    "population": 3822345,
+    "soldierValue": 1
+  },
+  {
+    "code": "GE",
+    "name": "Georgia",
+    "population": 3804642,
+    "soldierValue": 1
+  },
+  {
+    "code": "ER",
+    "name": "Eritrea",
+    "population": 3682669,
+    "soldierValue": 1
+  },
+  {
+    "code": "MN",
+    "name": "Mongolia",
+    "population": 3556798,
+    "soldierValue": 1
+  },
+  {
+    "code": "UY",
+    "name": "Uruguay",
+    "population": 3382537,
+    "soldierValue": 1
+  },
+  {
+    "code": "PR",
+    "name": "Puerto Rico",
+    "population": 3222688,
+    "soldierValue": 1
+  },
+  {
+    "code": "QA",
+    "name": "Qatar",
+    "population": 3173559,
+    "soldierValue": 1
+  },
+  {
+    "code": "NA",
+    "name": "Namibia",
+    "population": 3153246,
+    "soldierValue": 1
+  },
+  {
+    "code": "BA",
+    "name": "Bosnia and Herzegovina",
+    "population": 3114242,
+    "soldierValue": 1
+  },
+  {
+    "code": "MD",
+    "name": "Moldova",
+    "population": 2961253,
+    "soldierValue": 1
+  },
+  {
+    "code": "AM",
+    "name": "Armenia",
+    "population": 2930915,
+    "soldierValue": 1
+  },
+  {
+    "code": "GM",
+    "name": "Gambia",
+    "population": 2884079,
+    "soldierValue": 1
+  },
+  {
+    "code": "JM",
+    "name": "Jamaica",
+    "population": 2833403,
+    "soldierValue": 1
+  },
+  {
+    "code": "LT",
+    "name": "Lithuania",
+    "population": 2797338,
+    "soldierValue": 1
+  },
+  {
+    "code": "AL",
+    "name": "Albania",
+    "population": 2751025,
+    "soldierValue": 1
+  },
+  {
+    "code": "GA",
+    "name": "Gabon",
+    "population": 2647399,
+    "soldierValue": 1
+  },
+  {
+    "code": "BW",
+    "name": "Botswana",
+    "population": 2603388,
+    "soldierValue": 1
+  },
+  {
+    "code": "LS",
+    "name": "Lesotho",
+    "population": 2389336,
+    "soldierValue": 1
+  },
+  {
+    "code": "GW",
+    "name": "Guinea-Bissau",
+    "population": 2297808,
+    "soldierValue": 1
+  },
+  {
+    "code": "SI",
+    "name": "Slovenia",
+    "population": 2114573,
+    "soldierValue": 1
+  },
+  {
+    "code": "GQ",
+    "name": "Equatorial Guinea",
+    "population": 1984468,
+    "soldierValue": 1
+  },
+  {
+    "code": "LV",
+    "name": "Latvia",
+    "population": 1835935,
+    "soldierValue": 1
+  },
+  {
+    "code": "MK",
+    "name": "North Macedonia",
+    "population": 1804063,
+    "soldierValue": 1
+  },
+  {
+    "code": "BH",
+    "name": "Bahrain",
+    "population": 1675572,
+    "soldierValue": 1
+  },
+  {
+    "code": "TT",
+    "name": "Trinidad and Tobago",
+    "population": 1513268,
+    "soldierValue": 1
+  },
+  {
+    "code": "TL",
+    "name": "Timor-Leste",
+    "population": 1436923,
+    "soldierValue": 1
+  },
+  {
+    "code": "CY",
+    "name": "Cyprus",
+    "population": 1382334,
+    "soldierValue": 1
+  },
+  {
+    "code": "EE",
+    "name": "Estonia",
+    "population": 1331062,
+    "soldierValue": 1
+  },
+  {
+    "code": "SZ",
+    "name": "Eswatini",
+    "population": 1269859,
+    "soldierValue": 1
+  },
+  {
+    "code": "MU",
+    "name": "Mauritius",
+    "population": 1265059,
+    "soldierValue": 1
+  },
+  {
+    "code": "DJ",
+    "name": "Djibouti",
+    "population": 1199459,
+    "soldierValue": 1
+  },
+  {
+    "code": "FJ",
+    "name": "Fiji",
+    "population": 937282,
+    "soldierValue": 1
+  },
+  {
+    "code": "KM",
+    "name": "Comoros",
+    "population": 899010,
+    "soldierValue": 1
+  },
+  {
+    "code": "RE",
+    "name": "Réunion",
+    "population": 886298,
+    "soldierValue": 1
+  },
+  {
+    "code": "SB",
+    "name": "Solomon Islands",
+    "population": 858288,
+    "soldierValue": 1
+  },
+  {
+    "code": "GY",
+    "name": "Guyana",
+    "population": 840890,
+    "soldierValue": 1
+  },
+  {
+    "code": "BT",
+    "name": "Bhutan",
+    "population": 802214,
+    "soldierValue": 1
+  },
+  {
+    "code": "MO",
+    "name": "Macao",
+    "population": 723188,
+    "soldierValue": 1
+  },
+  {
+    "code": "LU",
+    "name": "Luxembourg",
+    "population": 687448,
+    "soldierValue": 1
+  },
+  {
+    "code": "SR",
+    "name": "Suriname",
+    "population": 645256,
+    "soldierValue": 1
+  },
+  {
+    "code": "ME",
+    "name": "Montenegro",
+    "population": 626233,
+    "soldierValue": 1
+  },
+  {
+    "code": "EH",
+    "name": "Western Sahara",
+    "population": 610813,
+    "soldierValue": 1
+  },
+  {
+    "code": "MT",
+    "name": "Malta",
+    "population": 549011,
+    "soldierValue": 1
+  },
+  {
+    "code": "MV",
+    "name": "Maldives",
+    "population": 531517,
+    "soldierValue": 1
+  },
+  {
+    "code": "CV",
+    "name": "Cabo Verde",
+    "population": 529630,
+    "soldierValue": 1
+  },
+  {
+    "code": "BN",
+    "name": "Brunei",
+    "population": 469775,
+    "soldierValue": 1
+  },
+  {
+    "code": "BZ",
+    "name": "Belize",
+    "population": 428644,
+    "soldierValue": 1
+  },
+  {
+    "code": "BS",
+    "name": "Bahamas",
+    "population": 404628,
+    "soldierValue": 1
+  },
+  {
+    "code": "IS",
+    "name": "Iceland",
+    "population": 402329,
+    "soldierValue": 1
+  },
+  {
+    "code": "GP",
+    "name": "Guadeloupe",
+    "population": 372453,
+    "soldierValue": 1
+  },
+  {
+    "code": "YT",
+    "name": "Mayotte",
+    "population": 347536,
+    "soldierValue": 1
+  },
+  {
+    "code": "VU",
+    "name": "Vanuatu",
+    "population": 342564,
+    "soldierValue": 1
+  },
+  {
+    "code": "MQ",
+    "name": "Martinique",
+    "population": 337711,
+    "soldierValue": 1
+  },
+  {
+    "code": "GF",
+    "name": "French Guiana",
+    "population": 318872,
+    "soldierValue": 1
+  },
+  {
+    "code": "NC",
+    "name": "New Caledonia",
+    "population": 297892,
+    "soldierValue": 1
+  },
+  {
+    "code": "PF",
+    "name": "French Polynesia",
+    "population": 283076,
+    "soldierValue": 1
+  },
+  {
+    "code": "BB",
+    "name": "Barbados",
+    "population": 282724,
+    "soldierValue": 1
+  },
+  {
+    "code": "ST",
+    "name": "Sao Tome & Principe",
+    "population": 244994,
+    "soldierValue": 1
+  },
+  {
+    "code": "WS",
+    "name": "Samoa",
+    "population": 220528,
+    "soldierValue": 1
+  },
+  {
+    "code": "CW",
+    "name": "Curaçao",
+    "population": 185440,
+    "soldierValue": 1
+  },
+  {
+    "code": "LC",
+    "name": "Saint Lucia",
+    "population": 180488,
+    "soldierValue": 1
+  },
+  {
+    "code": "GU",
+    "name": "Guam",
+    "population": 170185,
+    "soldierValue": 1
+  },
+  {
+    "code": "KI",
+    "name": "Kiribati",
+    "population": 138445,
+    "soldierValue": 1
+  },
+  {
+    "code": "SC",
+    "name": "Seychelles",
+    "population": 134959,
+    "soldierValue": 1
+  },
+  {
+    "code": "GD",
+    "name": "Grenada",
+    "population": 117362,
+    "soldierValue": 1
+  },
+  {
+    "code": "FM",
+    "name": "Micronesia",
+    "population": 114183,
+    "soldierValue": 1
+  },
+  {
+    "code": "AW",
+    "name": "Aruba",
+    "population": 108164,
+    "soldierValue": 1
+  },
+  {
+    "code": "TO",
+    "name": "Tonga",
+    "population": 103291,
+    "soldierValue": 1
+  },
+  {
+    "code": "VC",
+    "name": "St. Vincent & Grenadines",
+    "population": 99245,
+    "soldierValue": 1
+  },
+  {
+    "code": "AG",
+    "name": "Antigua and Barbuda",
+    "population": 94626,
+    "soldierValue": 1
+  },
+  {
+    "code": "IM",
+    "name": "Isle of Man",
+    "population": 84055,
+    "soldierValue": 1
+  },
+  {
+    "code": "AD",
+    "name": "Andorra",
+    "population": 83753,
+    "soldierValue": 1
+  },
+  {
+    "code": "VI",
+    "name": "U.S. Virgin Islands",
+    "population": 83400,
+    "soldierValue": 1
+  },
+  {
+    "code": "KY",
+    "name": "Cayman Islands",
+    "population": 77196,
+    "soldierValue": 1
+  },
+  {
+    "code": "DM",
+    "name": "Dominica",
+    "population": 65511,
+    "soldierValue": 1
+  },
+  {
+    "code": "BM",
+    "name": "Bermuda",
+    "population": 64459,
+    "soldierValue": 1
+  },
+  {
+    "code": "FO",
+    "name": "Faeroe Islands",
+    "population": 56526,
+    "soldierValue": 1
+  },
+  {
+    "code": "GL",
+    "name": "Greenland",
+    "population": 55629,
+    "soldierValue": 1
+  },
+  {
+    "code": "TC",
+    "name": "Turks and Caicos",
+    "population": 47148,
+    "soldierValue": 1
+  },
+  {
+    "code": "KN",
+    "name": "Saint Kitts & Nevis",
+    "population": 46992,
+    "soldierValue": 1
+  },
+  {
+    "code": "AS",
+    "name": "American Samoa",
+    "population": 45319,
+    "soldierValue": 1
+  },
+  {
+    "code": "SX",
+    "name": "Sint Maarten",
+    "population": 44447,
+    "soldierValue": 1
+  },
+  {
+    "code": "MP",
+    "name": "Northern Mariana Islands",
+    "population": 42914,
+    "soldierValue": 1
+  },
+  {
+    "code": "GI",
+    "name": "Gibraltar",
+    "population": 40867,
+    "soldierValue": 1
+  },
+  {
+    "code": "LI",
+    "name": "Liechtenstein",
+    "population": 40368,
+    "soldierValue": 1
+  },
+  {
+    "code": "VG",
+    "name": "British Virgin Islands",
+    "population": 39936,
+    "soldierValue": 1
+  },
+  {
+    "code": "MC",
+    "name": "Monaco",
+    "population": 38087,
+    "soldierValue": 1
+  },
+  {
+    "code": "MH",
+    "name": "Marshall Islands",
+    "population": 35075,
+    "soldierValue": 1
+  },
+  {
+    "code": "SM",
+    "name": "San Marino",
+    "population": 33605,
+    "soldierValue": 1
+  },
+  {
+    "code": "BQ",
+    "name": "Caribbean Netherlands",
+    "population": 31913,
+    "soldierValue": 1
+  },
+  {
+    "code": "MF",
+    "name": "Saint Martin",
+    "population": 23898,
+    "soldierValue": 1
+  },
+  {
+    "code": "PW",
+    "name": "Palau",
+    "population": 17614,
+    "soldierValue": 1
+  },
+  {
+    "code": "AI",
+    "name": "Anguilla",
+    "population": 14817,
+    "soldierValue": 1
+  },
+  {
+    "code": "CK",
+    "name": "Cook Islands",
+    "population": 12826,
+    "soldierValue": 1
+  },
+  {
+    "code": "NR",
+    "name": "Nauru",
+    "population": 12101,
+    "soldierValue": 1
+  },
+  {
+    "code": "BL",
+    "name": "Saint Barthelemy",
+    "population": 11550,
+    "soldierValue": 1
+  },
+  {
+    "code": "WF",
+    "name": "Wallis & Futuna",
+    "population": 11113,
+    "soldierValue": 1
+  },
+  {
+    "code": "TV",
+    "name": "Tuvalu",
+    "population": 9362,
+    "soldierValue": 1
+  },
+  {
+    "code": "PM",
+    "name": "Saint Pierre & Miquelon",
+    "population": 5513,
+    "soldierValue": 1
+  },
+  {
+    "code": "SH",
+    "name": "Saint Helena",
+    "population": 5147,
+    "soldierValue": 1
+  },
+  {
+    "code": "MS",
+    "name": "Montserrat",
+    "population": 4328,
+    "soldierValue": 1
+  },
+  {
+    "code": "FK",
+    "name": "Falkland Islands",
+    "population": 3465,
+    "soldierValue": 1
+  },
+  {
+    "code": "TK",
+    "name": "Tokelau",
+    "population": 2691,
+    "soldierValue": 1
+  },
+  {
+    "code": "NU",
+    "name": "Niue",
+    "population": 1822,
+    "soldierValue": 1
+  },
+  {
+    "code": "VA",
+    "name": "Vatican City",
+    "population": 506,
+    "soldierValue": 1
+  }
+]
