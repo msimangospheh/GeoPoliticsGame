@@ -32,4 +32,11 @@
 		<None Include="Views\Game\Setup.cshtml" />
 		<None Include="Views\Game\Start.cshtml" />
 	</ItemGroup>
+	<!-- The test project lives in Tests\ and is built separately -->
+	<ItemGroup>
+		<Compile Remove="Tests\**" />
+		<Content Remove="Tests\**" />
+		<EmbeddedResource Remove="Tests\**" />
+		<None Remove="Tests\**" />
+	</ItemGroup>
 </Project>

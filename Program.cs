@@ -2,6 +2,7 @@ using GeoPolitics_Game.Data;
 using GeoPolitics_Game.Data.Repositories;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using GeoPolitics_Game.Services.Engine;
 
 MongoConventions.Register();   // must run BEFORE anything touches MongoDB
 
@@ -16,6 +17,9 @@ builder.Services.AddScoped<ICountryRepository, MongoCountryRepository>();
 builder.Services.AddScoped<IGameRepository, MongoGameRepository>();
 builder.Services.AddScoped<IGameEventRepository, MongoGameEventRepository>();
 builder.Services.AddScoped<DatabaseSeeder>();
+// ---- Game engine ----
+builder.Services.AddSingleton<IRandomSource, SecureRandomSource>();
+builder.Services.AddSingleton<IGameEngine, GameEngine>();
 
 var app = builder.Build();
 
