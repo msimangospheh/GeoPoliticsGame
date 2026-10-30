@@ -23,12 +23,10 @@
 	<ItemGroup>
 		<Compile Remove="Services\GameEngineService.cs" />
 		<Compile Remove="Services\NpcAIService.cs" />
-		<Compile Remove="Controllers\GameController.cs" />
 		<Content Remove="Views\Game\Setup.cshtml" />
 		<Content Remove="Views\Game\Start.cshtml" />
 		<None Include="Services\GameEngineService.cs" />
 		<None Include="Services\NpcAIService.cs" />
-		<None Include="Controllers\GameController.cs" />
 		<None Include="Views\Game\Setup.cshtml" />
 		<None Include="Views\Game\Start.cshtml" />
 	</ItemGroup>

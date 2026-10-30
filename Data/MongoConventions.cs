@@ -1,5 +1,7 @@
 ﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Conventions;
+using MongoDB.Bson.Serialization.Serializers;
 
 namespace GeoPolitics_Game.Data
 {
@@ -20,9 +22,19 @@ namespace GeoPolitics_Game.Data
                 new EnumRepresentationConvention(BsonType.String)  // enums saved as "InProgress", not 0
             };
 
-            // Only apply to OUR classes (not the login library we add later)
+            // Only our game models (Country, Game, GameEvent...) - NOT the login library's classes
             ConventionRegistry.Register("GeoPoliticsConventions", pack,
-                type => type.Namespace?.StartsWith("GeoPolitics_Game") == true);
+                type => type.Namespace == "GeoPolitics_Game.Models");
+
+            // MongoDB.Driver 3 must be told how to store Guids (used for user ids)
+            try
+            {
+                BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+            }
+            catch (BsonSerializationException)
+            {
+                // Already registered by a library - that's fine
+            }
         }
     }
 }
