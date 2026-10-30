@@ -1,0 +1,58 @@
+﻿@model GeoPolitics_Game.Models.Game
+@{
+    var g = Model;
+    var homeland = g.Territories.FirstOrDefault(t => t.CountryCode == g.StartCountryCode)?.CountryName ?? g.StartCountryCode;
+    var nations = g.TerritoryCount(g.HumanPlayerId);
+    var soldiers = g.SoldierCount(g.HumanPlayerId);
+
+    var (label, badge) = g.Status switch
+    {
+        GameStatus.Setup => ("SETUP", "badge-npc"),
+        GameStatus.Won => ("VICTORY", "badge-you"),
+        GameStatus.Lost => ("ELIMINATED", "badge-target"),
+        _ => g.CurrentPlayerId == g.HumanPlayerId ? ("YOUR TURN", "badge-you") : ("NPC TURN", "badge-npc")
+    };
+
+    var detail = g.Status switch
+    {
+        GameStatus.Setup => "Rivals drawn · not launched yet",
+        GameStatus.Won => "World conquered",
+        GameStatus.Lost => $"Fell in round {g.Round}",
+        _ => $"{nations} of 10 nations · {soldiers} soldiers"
+    };
+
+    // one segment per country: yours first (green), then NPCs (amber)
+    var segments = g.Territories.OrderByDescending(t => t.OwnerPlayerId == g.HumanPlayerId).ToList();
+}
+
+<div class="panel game-card h-100 @(label == "YOUR TURN" ? "is-your-turn" : "")">
+    <div class="d-flex justify-content-between align-items-start gap-2">
+        <span class="small fw-semibold muted">GAME #@g.ShortCode · @(g.IsOver ? $"{g.Round} ROUNDS" : $"ROUND {g.Round}")</span>
+        <span class="badge @badge">@label</span>
+    </div>
+
+    <h3 class="h4 mt-2 mb-1">@homeland</h3>
+    <p class="muted small mb-3">@detail</p>
+
+    <div class="segments mb-3">
+        @foreach (var t in segments)
+        {
+            <span class="@(t.OwnerPlayerId == g.HumanPlayerId ? "you" : "npc")" title="@t.CountryName"></span>
+        }
+    </div>
+
+    <div class="d-flex gap-2">
+        @if (g.Status == GameStatus.Setup)
+        {
+            <a class="btn btn-you flex-grow-1" asp-action="Setup" asp-route-id="@g.Id">Continue setup</a>
+        }
+        else if (g.Status == GameStatus.InProgress)
+        {
+            <a class="btn btn-you flex-grow-1" href="/Play/@g.Id">Resume campaign</a>
+        }
+        <form asp-action="Delete" asp-route-id="@g.Id" method="post" class="m-0"
+              onsubmit="return confirm('Delete campaign #@g.ShortCode? This cannot be undone.');">
+            <button type="submit" class="btn btn-ghost" title="Delete">&#x1F5D1;</button>
+        </form>
+    </div>
+</div>

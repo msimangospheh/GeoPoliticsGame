@@ -1,0 +1,85 @@
+﻿@model NewCampaignViewModel
+@{
+    ViewData["Title"] = "New campaign";
+}
+
+<partial name="_WizardSteps" model="1" />
+
+<p class="eyebrow">New campaign</p>
+<h1 class="mb-4">Choose the nation you will lead</h1>
+
+<partial name="_Messages" />
+
+<div class="row g-4">
+    <!-- Country list -->
+    <div class="col-lg-6">
+        <div class="panel">
+            <form method="get" class="mb-3">
+                <input type="hidden" name="code" value="@Model.Homeland?.Code" />
+                <input name="search" value="@Model.Search" class="form-control" placeholder="Search countries" />
+            </form>
+            <div class="d-flex justify-content-between small fw-bold muted px-2 mb-2">
+                <span>COUNTRY</span><span>POPULATION · SOLDIERS</span>
+            </div>
+            <div class="country-list">
+                @foreach (var c in Model.Countries)
+                {
+                    <a class="country-row @(c.Code == Model.Homeland?.Code ? "selected" : "")"
+                       asp-action="New" asp-route-code="@c.Code" asp-route-search="@Model.Search">
+                        <span class="code-chip">@c.Code</span>
+                        <span class="flex-grow-1">
+                            <span class="d-block fw-semibold">@c.Name</span>
+                            <span class="small muted">@c.PopulationLabel</span>
+                        </span>
+                        <span class="soldier-dots">
+                            @for (int i = 1; i <= 9; i++)
+                            {
+                                <i class="@(i <= c.SoldierValue ? "on" : "")"></i>
+                            }
+                        </span>
+                        <span class="soldier-value">@c.SoldierValue</span>
+                    </a>
+                }
+                @if (Model.Countries.Count == 0)
+                {
+                    <p class="muted px-2">No countries match "@Model.Search".</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Homeland card + population table -->
+    <div class="col-lg-6">
+        <div class="row g-4">
+            <div class="col-md-7">
+                @if (Model.Homeland is { } h)
+                {
+                    <div class="panel homeland-card h-100">
+                        <p class="eyebrow" style="color:var(--you-ink)">Your homeland</p>
+                        <div class="d-flex justify-content-between align-items-start gap-2">
+                            <h2 class="h3">@h.Name</h2>
+                            <span class="homeland-value">@h.SoldierValue</span>
+                        </div>
+                        <img src="@h.FlagUrl" alt="@h.Name flag" class="homeland-flag mb-3" />
+                        <p class="mb-1">@h.PopulationLabel &rarr; <strong>@h.SoldierValue soldiers</strong> to start</p>
+                        <p class="small muted">Conquering it would pay rivals max(2, @h.SoldierValue &divide; 2) = @Math.Max(2, h.SoldierValue / 2) soldiers.</p>
+                        <form asp-action="Draft" method="post">
+                            <input type="hidden" name="code" value="@h.Code" />
+                            <button type="submit" class="btn btn-you w-100 mt-2">Draw my nine rivals &rarr;</button>
+                        </form>
+                    </div>
+                }
+                else
+                {
+                    <div class="new-campaign-card h-100">
+                        <h3 class="h5">Pick your homeland</h3>
+                        <p class="mb-0">Choose a country from the list. Bigger populations start with more soldiers.</p>
+                    </div>
+                }
+            </div>
+            <div class="col-md-5">
+                <partial name="_SoldierTable" model="Model.Homeland?.SoldierValue ?? 0" />
+            </div>
+        </div>
+    </div>
+</div>

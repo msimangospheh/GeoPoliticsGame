@@ -1,0 +1,99 @@
+﻿@model SetupViewModel
+@{
+    ViewData["Title"] = "Rules & launch";
+    var g = Model.Game;
+    var home = g.Territories.First(t => t.CountryCode == g.StartCountryCode);
+    var rivals = g.Players.Where(p => !p.IsHuman)
+                          .OrderByDescending(p => g.SoldierCount(p.Id))
+                          .ToList();
+}
+
+<partial name="_WizardSteps" model="3" />
+
+<p class="eyebrow">New campaign · Game #@g.ShortCode</p>
+<h1 class="mb-4">Nine rivals, drawn by fate</h1>
+
+<partial name="_Messages" />
+
+<div class="row g-4">
+    <!-- Rivals -->
+    <div class="col-lg-8">
+        <div class="panel">
+            <div class="d-flex justify-content-between align-items-start mb-3 gap-3">
+                <div>
+                    <h2 class="h4 mb-1">Your rivals</h2>
+                    <p class="muted mb-0">Each NPC is given a strategy profile.</p>
+                </div>
+                <form asp-action="Redraw" asp-route-id="@g.Id" method="post" class="m-0">
+                    <button type="submit" class="btn btn-ghost">&#x21bb; Redraw rivals</button>
+                </form>
+            </div>
+
+            <div class="row g-3">
+                @for (int i = 0; i < rivals.Count; i++)
+                {
+                    var npc = rivals[i];
+                    var t = g.TerritoriesOf(npc.Id).First();
+                    <div class="col-sm-6 col-md-4">
+                        <div class="rival-card" style="animation-delay:@(i * 70)ms">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <span class="profile-badge">@npc.Badge</span>
+                                <span class="rival-value">@t.Soldiers</span>
+                            </div>
+                            <div class="fw-semibold mt-2">@t.CountryName</div>
+                            <div class="small">@npc.Name</div>
+                            <div class="small muted fst-italic">@ProfileInfo.Describe(npc.Profile)</div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Homeland + launch settings -->
+    <div class="col-lg-4">
+        <div class="panel homeland-card mb-3">
+            <p class="eyebrow" style="color:var(--you-ink)">Your homeland</p>
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="h4 mb-0">@home.CountryName</h2>
+                <span class="homeland-value" style="font-size:2.6rem">@home.Soldiers</span>
+            </div>
+        </div>
+
+        <form asp-action="Launch" asp-route-id="@g.Id" method="post" class="panel">
+            <p class="eyebrow">NPC difficulty</p>
+            <div class="radio-cards mb-3">
+                @foreach (var d in Enum.GetValues<Difficulty>())
+                {
+                    <label class="radio-card">
+                        <input type="radio" name="Difficulty" value="@d" @(d == Difficulty.Commander ? "checked" : "") />
+                        <span><strong>@d</strong><small>@ProfileInfo.DescribeDifficulty(d)</small></span>
+                    </label>
+                }
+            </div>
+
+            <p class="eyebrow">AI chronicler voice</p>
+            <div class="radio-cards mb-3">
+                @foreach (var v in ChroniclerVoices.All)
+                {
+                    <label class="radio-card">
+                        <input type="radio" name="CommentatorVoice" value="@v" @(v == ChroniclerVoices.All[0] ? "checked" : "") />
+                        <span><strong>@v</strong></span>
+                    </label>
+                }
+            </div>
+
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" name="AllowSpectators" value="true" id="allowSpectators" checked />
+                <label class="form-check-label" for="allowSpectators">Allow spectators with link</label>
+            </div>
+
+            <p class="small muted mb-3"><strong>Who strikes first?</strong> The server rolls for turn order on launch.</p>
+            <button type="submit" class="btn btn-attack w-100 py-2">Launch campaign</button>
+        </form>
+
+        <form asp-action="Delete" asp-route-id="@g.Id" method="post" class="text-center mt-2">
+            <button type="submit" class="btn btn-link btn-sm muted">Discard this draft</button>
+        </form>
+    </div>
+</div>

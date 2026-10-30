@@ -7,6 +7,8 @@ using GeoPolitics_Game.Services.Engine;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
+using GeoPolitics_Game.Services;
+using GeoPolitics_Game.Services.Npc;
 using MongoDB.Driver;
 
 MongoConventions.Register();   // must run BEFORE anything touches MongoDB
@@ -28,6 +30,8 @@ builder.Services.AddScoped<DatabaseSeeder>();
 // ---- Game engine ----
 builder.Services.AddSingleton<IRandomSource, SecureRandomSource>();
 builder.Services.AddSingleton<IGameEngine, GameEngine>();
+builder.Services.AddScoped<INpcPlayer, PassiveNpcPlayer>();   // placeholder until Phase 6
+builder.Services.AddScoped<IGameService, GameService>();
 
 // ---- Login: ASP.NET Identity, users stored in MongoDB ----
 var mongoConnection = builder.Configuration["MongoDb:ConnectionString"]

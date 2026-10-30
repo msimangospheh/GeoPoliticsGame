@@ -21,6 +21,23 @@ namespace GeoPolitics_Game.Data.Repositories
             await _events.InsertOneAsync(gameEvent);
         }
 
+        // Saves several events at once, numbering them in order
+        public async Task AddManyAsync(IEnumerable<GameEvent> gameEvents)
+        {
+            var list = gameEvents.ToList();
+            if (list.Count == 0) return;
+
+            var gameId = list[0].GameId;
+            var last = await _events.Find(e => e.GameId == gameId)
+                                    .SortByDescending(e => e.Seq)
+                                    .Limit(1)
+                                    .FirstOrDefaultAsync();
+            int seq = last?.Seq ?? 0;
+            foreach (var e in list) e.Seq = ++seq;
+
+            await _events.InsertManyAsync(list);
+        }
+
         // afterSeq lets spectators fetch only the NEW events since they last checked
         public async Task<List<GameEvent>> GetForGameAsync(string gameId, int afterSeq = 0)
         {

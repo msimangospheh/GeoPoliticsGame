@@ -347,3 +347,332 @@ a {
         transition: none !important;
     }
 }
+
+/* ===== Phase 5A: messages, lobby, new campaign ===== */
+.flash {
+    border-radius: 12px;
+    padding: .8rem 1rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+    animation: rise .4s ease both;
+}
+
+.flash-error {
+    background: rgba(244,63,94,.12);
+    color: var(--target-ink);
+    border: 1px solid rgba(244,63,94,.35);
+}
+
+.flash-success {
+    background: var(--you-soft);
+    color: var(--you-ink);
+    border: 1px solid rgba(16,185,129,.4);
+}
+
+.search-box {
+    flex: 1;
+    max-width: 460px;
+}
+
+.pill-group {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: .25rem;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: .25rem;
+}
+
+.pill {
+    padding: .35rem .9rem;
+    border-radius: 9px;
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+    .pill:hover {
+        color: var(--ink);
+    }
+
+    .pill.active {
+        background: var(--gold);
+        color: var(--ink);
+    }
+
+.game-card {
+    transition: transform .2s, box-shadow .2s;
+}
+
+    .game-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 28px rgba(58,42,30,.12);
+    }
+
+    .game-card.is-your-turn {
+        border: 2px solid var(--you);
+        box-shadow: 0 0 22px rgba(16,185,129,.25);
+    }
+
+.segments {
+    display: flex;
+    gap: 4px;
+}
+
+    .segments span {
+        flex: 1;
+        height: 10px;
+        border-radius: 3px;
+        background: var(--line);
+    }
+
+        .segments span.you {
+            background: var(--you);
+        }
+
+        .segments span.npc {
+            background: var(--npc);
+        }
+
+a.new-campaign-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    text-decoration: none;
+    transition: border-color .2s, background .2s;
+}
+
+    a.new-campaign-card:hover {
+        border-color: var(--gold);
+        background: rgba(244,236,225,.5);
+        color: var(--ink);
+    }
+
+.wizard-steps {
+    display: flex;
+    gap: .6rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+}
+
+    .wizard-steps li {
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+        padding: .35rem .9rem .35rem .4rem;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--ink-soft);
+        font-weight: 600;
+    }
+
+        .wizard-steps li span {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            border: 1px solid var(--line);
+            font-size: .8rem;
+        }
+
+        .wizard-steps li.done {
+            background: #f3e2b8;
+            border-color: var(--gold);
+            color: var(--npc-ink);
+        }
+
+            .wizard-steps li.done span {
+                background: var(--gold);
+                color: #fff;
+                border: 0;
+            }
+
+        .wizard-steps li.current {
+            background: var(--you-soft);
+            border-color: var(--you);
+            color: var(--you-ink);
+        }
+
+            .wizard-steps li.current span {
+                background: var(--you);
+                color: #fff;
+                border: 0;
+            }
+
+.country-list {
+    max-height: 560px;
+    overflow-y: auto;
+    padding-right: .25rem;
+}
+
+.country-row {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    padding: .6rem .7rem;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    color: var(--ink);
+    text-decoration: none;
+    transition: background .15s;
+}
+
+    .country-row:hover {
+        background: rgba(201,180,155,.25);
+        color: var(--ink);
+    }
+
+    .country-row.selected {
+        background: var(--you-soft);
+        border-color: var(--you);
+    }
+
+.code-chip {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    background: #ead9bd;
+    border: 1px solid var(--line);
+    font-family: Cinzel, serif;
+    font-weight: 700;
+    font-size: .85rem;
+    color: var(--npc-ink);
+}
+
+.country-row.selected .code-chip {
+    background: var(--you);
+    color: #fff;
+    border-color: var(--you);
+}
+
+.soldier-dots {
+    display: flex;
+    gap: 2px;
+}
+
+    .soldier-dots i {
+        width: 6px;
+        height: 14px;
+        border-radius: 2px;
+        background: var(--line);
+    }
+
+        .soldier-dots i.on {
+            background: var(--gold);
+        }
+
+.country-row.selected .soldier-dots i.on {
+    background: var(--you);
+}
+
+.soldier-value {
+    width: 1.5rem;
+    text-align: right;
+    font-family: Cinzel, serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.homeland-card {
+    border: 2px solid var(--you);
+    box-shadow: 0 0 26px rgba(16,185,129,.22);
+    animation: rise .4s ease both;
+}
+
+.homeland-value {
+    font-family: Cinzel, serif;
+    font-size: 4rem;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--you-ink);
+}
+
+.homeland-flag {
+    width: 72px;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+}
+
+.soldier-table td {
+    padding: .3rem .5rem;
+}
+
+    .soldier-table td:last-child {
+        font-family: Cinzel, serif;
+    }
+
+.soldier-table tr.highlight td {
+    background: var(--you-soft);
+    color: var(--you-ink);
+    font-weight: 700;
+}
+
+.rival-card {
+    height: 100%;
+    padding: .9rem;
+    background: #efe3d1;
+    border: 1px solid rgba(245,158,11,.45);
+    border-radius: 12px;
+    animation: rise .45s ease both;
+}
+
+.profile-badge {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid var(--npc);
+    color: var(--npc-ink);
+    display: grid;
+    place-items: center;
+    font-family: Cinzel, serif;
+    font-weight: 700;
+    font-size: .85rem;
+}
+
+.rival-value {
+    font-family: Cinzel, serif;
+    font-size: 2rem;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--npc-ink);
+}
+
+.radio-cards {
+    display: grid;
+    gap: .5rem;
+}
+
+.radio-card {
+    display: flex;
+    gap: .7rem;
+    align-items: flex-start;
+    padding: .7rem .9rem;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    cursor: pointer;
+    background: var(--field);
+    transition: border-color .15s, background .15s;
+}
+
+    .radio-card:has(input:checked) {
+        border-color: var(--you);
+        background: var(--you-soft);
+    }
+
+    .radio-card input {
+        margin-top: .25rem;
+        accent-color: var(--you);
+    }
+
+    .radio-card small {
+        display: block;
+        color: var(--ink-soft);
+    }

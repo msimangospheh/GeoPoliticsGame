@@ -1,0 +1,21 @@
+﻿@model int
+@{
+    var rows = new (string Label, int Value)[]
+    {
+        ("Up to 5M", 1), ("Up to 10M", 2), ("Up to 25M", 3), ("Up to 50M", 4), ("Up to 75M", 5),
+        ("Up to 100M", 6), ("Up to 125M", 7), ("Up to 150M", 8), ("More than 150M", 9)
+    };
+}
+
+<div class="panel h-100">
+    <p class="eyebrow">Population &rarr; soldiers</p>
+    <table class="soldier-table w-100">
+        @foreach (var row in rows)
+        {
+            <tr class="@(row.Value == Model ? "highlight" : "")">
+                <td>@row.Label</td>
+                <td class="text-end">@row.Value</td>
+            </tr>
+        }
+    </table>
+</div>
