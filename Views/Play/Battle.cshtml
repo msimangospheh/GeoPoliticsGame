@@ -1,0 +1,166 @@
+﻿@model BoardViewModel
+@using GeoPolitics_Game.Services.Engine
+@{
+    var g = Model.Game;
+    var battle = g.ActiveBattle!;
+    var att = Model.Attacker!;
+    var def = Model.Defender!;
+    var roll = Model.LastRoll;
+    var attOwner = g.GetPlayer(battle.AttackerPlayerId);
+    var defOwner = g.GetPlayer(battle.DefenderPlayerId);
+    int odds = BattleOdds.AsPercent(att.Soldiers, def.Soldiers);
+    int nextDice = Math.Min(att.Soldiers - 1, def.Soldiers);
+    ViewData["Title"] = $"The Battle for {def.CountryName}";
+}
+
+<partial name="_Messages" />
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="panel battle-stage">
+            <p class="eyebrow text-center" style="color:var(--target-ink)">Round @g.Round · Roll @battle.Rolls.Count</p>
+            <h1 class="text-center mb-4">The Battle for @def.CountryName</h1>
+
+            <div class="battle-grid">
+                <!-- Attacker -->
+                <div class="side-panel @attOwner.ColorClass">
+                    <p class="eyebrow">Attacker · @(attOwner.IsHuman ? "You" : attOwner.Name)</p>
+                    <h2 class="h4">@att.CountryName</h2>
+                    <div class="big">@att.Soldiers@if (roll?.AttackerLosses > 0) {
+                    <span class="loss-badge">&minus;@roll.AttackerLosses</span>
+                                        }
+</div>
+                    <p class="small mb-1">@Math.Max(0, att.Soldiers - 1) can still fight · 1 stays home</p>
+                    <div class="shields">
+                        @for (int i = 0; i < Math.Min(att.Soldiers, 15); i++)
+                        {
+                            <span class="shield"></span>
+                        }
+                        @for (int i = 0; i < (roll?.AttackerLosses ?? 0); i++)
+                        {
+                            <span class="shield lost"></span>
+                        }
+                    </div>
+                </div>
+
+                <!-- Dice -->
+                <div class="dice-column">
+                    @if (roll == null)
+                    {
+                        <p class="text-center muted mb-0">Roll the dice to begin.</p>
+                    }
+                    else
+                    {
+                        for (int i = 0; i < roll.AttackerDice.Count; i++)
+                        {
+                            int a = roll.AttackerDice[i], d = roll.DefenderDice[i];
+                            var text = a > d ? $"{att.CountryName} wins · {def.CountryName} -1"
+                            : a < d ? $"{def.CountryName} wins · {att.CountryName} -1"
+                            : "Tie · nobody falls";
+                            <div class="duel" style="animation-delay:@(i * 90)ms">
+                                <span class="die @(a > d ? "win" : a < d ? "lose" : "")">@a</span>
+                                <span>@text</span>
+                                <span class="die @(d > a ? "win" : d < a ? "lose" : "")">@d</span>
+                            </div>
+                        }
+                    }
+                </div>
+
+                <!-- Defender -->
+                <div class="side-panel @defOwner.ColorClass">
+                    <p class="eyebrow">Defender · @(defOwner.IsHuman ? "You" : defOwner.Name)</p>
+                    <h2 class="h4">@def.CountryName</h2>
+                    <div class="big">@def.Soldiers@if (roll?.DefenderLosses > 0) {
+                    <span class="loss-badge">&minus;@roll.DefenderLosses</span>
+                                        }
+</div>
+                    <p class="small mb-1">Defends with @nextDice dice next roll</p>
+                    <div class="shields">
+                        @for (int i = 0; i < Math.Min(def.Soldiers, 15); i++)
+                        {
+                            <span class="shield"></span>
+                        }
+                        @for (int i = 0; i < (roll?.DefenderLosses ?? 0); i++)
+                        {
+                            <span class="shield lost"></span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3 mt-3">
+                <div class="col-md-4">
+                    <div class="panel h-100">
+                        <p class="eyebrow" style="color:var(--target-ink)">Current odds</p>
+                        <strong>@att.CountryName conquers @def.CountryName: @odds%</strong>
+                        <div class="card-bar mt-2"><span style="width:@(odds)%;background:var(--target)"></span></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel h-100">
+                        <p class="eyebrow" style="color:var(--you-ink)">Spoils if you win</p>
+                        <strong>+@def.ConquestSpoils soldiers</strong>
+                        <div class="small muted">max(2, @def.CountryName's value @def.SoldierValue &divide; 2)</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel h-100">
+                        <p class="eyebrow">Attack ends when</p>
+                        <span class="small">@def.CountryName hits 0, @att.CountryName drops to 1, or you retreat</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel chronicler mt-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <p class="eyebrow mb-0">&bull; The Chronicler speaks</p>
+                    <span class="badge badge-npc">Voice: @g.Settings.CommentatorVoice</span>
+                </div>
+                <p class="chronicle mb-1">&ldquo;@Model.ChronicleLine()&rdquo;</p>
+                <small class="muted">AI commentary arrives in Phase 7</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Battle log -->
+    <div class="col-lg-4">
+        <div class="panel h-100 d-flex flex-column">
+            <div class="d-flex justify-content-between mb-2"><strong>Game #@g.ShortCode</strong></div>
+            <p class="eyebrow">Battle log</p>
+            @for (int i = 0; i < battle.Rolls.Count; i++)
+            {
+                var r = battle.Rolls[i];
+                int attWins = r.DefenderLosses, defWins = r.AttackerLosses, ties = r.AttackerDice.Count - attWins - defWins;
+                <div class="battle-log-entry @(i == battle.Rolls.Count - 1 ? "latest" : "")">
+                    <strong>Roll @(i + 1) · @r.AttackerDice.Count duel@(r.AttackerDice.Count == 1 ? "" : "s")</strong><br />
+                    @att.CountryName wins @attWins, @def.CountryName wins @defWins, @ties tie@(ties == 1 ? "" : "s").
+                    @att.CountryName -@r.AttackerLosses, @def.CountryName -@r.DefenderLosses.
+                </div>
+            }
+            <p class="mt-2"><strong>Soldiers now</strong> · @att.CountryName @att.Soldiers · @def.CountryName @def.Soldiers</p>
+            <div class="mt-auto panel text-center" style="border-style:dashed;border-color:var(--you)">
+                <p class="eyebrow" style="color:var(--you-ink)">If @def.CountryName falls</p>
+                <strong>@def.CountryName conquered · +@def.ConquestSpoils soldiers</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="panel d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3">
+    @if (Model.CanPlay && attOwner.IsHuman)
+    {
+        <span class="small muted">Only the logged-in commander sees these buttons. Visitors watch the dice.</span>
+        <div class="d-flex gap-2">
+            <form asp-controller="Play" asp-action="Roll" asp-route-id="@g.Id" method="post" class="m-0">
+                <button type="submit" class="btn btn-attack px-5 py-2">ROLL AGAIN</button>
+            </form>
+            <form asp-controller="Play" asp-action="Retreat" asp-route-id="@g.Id" method="post" class="m-0">
+                <button type="submit" class="btn btn-ghost px-4 py-2">Retreat, end turn</button>
+            </form>
+        </div>
+    }
+    else
+    {
+        <span>&#x1F512; Only <strong>@g.OwnerName</strong> can roll in this game. <a href="/Play/@g.Id">Refresh</a> to see the latest roll.</span>
+    }
+</div>

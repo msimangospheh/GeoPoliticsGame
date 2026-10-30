@@ -14,6 +14,7 @@ namespace GeoPolitics_Game.Services
         Task<Game> LaunchAsync(string gameId, string userId, Difficulty difficulty, GameSettings settings);
         Task<Game> GetOwnedAsync(string gameId, string userId);
         Task DeleteAsync(string gameId, string userId);
+        Task<List<GameEvent>> PlayAsync(string gameId, string userId, Func<Game, List<GameEvent>> action);
     }
 
     public class GameService : IGameService
@@ -88,6 +89,17 @@ namespace GeoPolitics_Game.Services
             var game = await GetOwnedAsync(gameId, userId);
             await _events.DeleteForGameAsync(game.Id);
             await _games.DeleteAsync(game.Id);
+        }
+
+        // Runs one move for the human (attack, roll, transfer...), then lets NPCs play, then saves.
+        // GetOwnedAsync makes sure only the owner can do this.
+        public async Task<List<GameEvent>> PlayAsync(string gameId, string userId, Func<Game, List<GameEvent>> action)
+        {
+            var game = await GetOwnedAsync(gameId, userId);
+            var events = action(game);
+            events.AddRange(PlayNpcTurns(game));
+            await SaveAsync(game, events);
+            return events;
         }
 
         // NPCs take their turns until it's the human's turn again (or the game ends)

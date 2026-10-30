@@ -1,0 +1,189 @@
+﻿@model BoardViewModel
+@{
+    var g = Model.Game;
+    ViewData["Title"] = $"Game #{g.ShortCode}";
+}
+
+<div class="board-topbar">
+    <div class="d-flex align-items-center gap-3">
+        @if (Model.IsOwner)
+        {
+            <a href="/Games" class="btn btn-ghost btn-sm" title="Back to war room">&larr;</a>
+        }
+        <div>
+            <div class="display h5 mb-0">Game #@g.ShortCode</div>
+            <div class="small muted">Round @g.Round · @g.OwnerName</div>
+        </div>
+    </div>
+    <div class="legend">
+        <span class="legend-you">You</span><span>A Aggressor</span><span>D Defender</span><span>O Opportunist</span>
+    </div>
+    <button type="button" class="btn btn-ghost btn-sm" data-copy-link>Share link</button>
+</div>
+
+<partial name="_Messages" />
+
+@if (g.Status == GameStatus.Won)
+{
+    <div class="panel game-over-banner turn-panel"><h2 class="display">The world is yours!</h2><p class="mb-0">@g.OwnerName holds all 10 nations after @g.Round rounds.</p></div>
+}
+else if (g.Status == GameStatus.Lost)
+{
+    <div class="panel game-over-banner" style="border-color:var(--target)"><h2 class="display" style="color:var(--target-ink)">Your banner falls</h2><p class="mb-0">The campaign ended in round @g.Round.</p></div>
+}
+
+<div class="row g-3">
+    <!-- THE BOARD -->
+    <div class="col-lg-8">
+        <div class="board">
+            <svg class="board-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                @if (Model.CanPlay && Model.From != null && Model.To != null)
+                {
+                    var a = BoardViewModel.SlotPosition(Model.From.Slot);
+                    var b = BoardViewModel.SlotPosition(Model.To.Slot);
+                    <line x1="@a.X" y1="@a.Y" x2="@b.X" y2="@b.Y" class="attack-line" />
+                }
+            </svg>
+
+            @foreach (var t in g.Territories)
+            {
+                var pos = BoardViewModel.SlotPosition(t.Slot);
+                var owner = Model.OwnerOf(t);
+                var mine = Model.IsMine(t);
+                var css = mine ? "you" : "npc";
+                if (t == Model.To) { css += " target"; }
+                if (Model.CanPlay && t == Model.From) { css += " selected"; }
+                var link = mine
+                ? $"/Play/{g.Id}?from={t.CountryCode}&to={Model.To?.CountryCode}"
+                : $"/Play/{g.Id}?from={Model.From?.CountryCode}&to={t.CountryCode}";
+                var placed = Model.PlacedThisTurn(t);
+
+                <div class="island" style="left:@(pos.X)%;top:@(pos.Y)%"></div>
+                <a class="country-card board-card @css" style="left:@(pos.X)%;top:@(pos.Y)%" href="@link"
+                   title="@t.CountryName - @owner.Name">
+                    <div class="d-flex justify-content-between align-items-center gap-3">
+                        <span class="profile-badge sm @(mine ? "you" : "")">@owner.Badge</span>
+                        <span class="soldiers">@t.Soldiers</span>
+                    </div>
+                    <div class="card-name">@t.CountryName</div>
+                    <div class="card-bar"><span style="width:@(Model.BarPercent(t))%"></span></div>
+                    @if (placed > 0)
+                    {
+                        <span class="placed-badge">+@placed</span>
+                    }
+                </a>
+            }
+        </div>
+        <div class="small muted mt-2">Click one of your countries (green), then a rival's (amber) to plan an attack.</div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="col-lg-4 d-flex flex-column gap-3">
+        @if (Model.CanPlay)
+        {
+            <div class="panel turn-panel">
+                <h2 class="display h3 mb-1">Your turn</h2>
+                <p class="mb-0 small">
+                    @(g.Phase == TurnPhase.Reinforce
+                                    ? $"{Model.Human.ReinforcementsToPlace} reinforcements to place"
+                                    : g.AttackUsedThisTurn ? "Attack used · you can still transfer" : "1 attack left")
+            </p>
+        </div>
+
+            <div class="panel">
+                <p class="eyebrow">Planned attack</p>
+            @if (Model.From != null && Model.To != null)
+                {
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div><small class="muted d-block">From</small><strong style="color:var(--you-ink)">@Model.From.CountryName · @Model.From.Soldiers</strong></div>
+                        <span style="color:var(--target)">&rarr;</span>
+                        <div class="text-end"><small class="muted d-block">Target</small><strong style="color:var(--target-ink)">@Model.To.CountryName · @Model.To.Soldiers</strong></div>
+                    </div>
+                    @if (g.Settings.ShowOddsMeter)
+                    {
+                        <div class="small mb-1">Win odds <strong>@Model.OddsPercent%</strong> · spoils <strong>+@Model.To.ConquestSpoils</strong></div>
+                        <div class="card-bar mb-3"><span style="width:@(Model.OddsPercent)%;background:var(--target)"></span></div>
+                    }
+                    <form asp-controller="Play" asp-action="Attack" asp-route-id="@g.Id" method="post">
+                        <input type="hidden" name="from" value="@Model.From.CountryCode" />
+                        <input type="hidden" name="to" value="@Model.To.CountryCode" />
+                        <button type="submit" class="btn btn-attack w-100 py-2"
+                                disabled="@(g.Phase == TurnPhase.Reinforce || g.AttackUsedThisTurn || !Model.From.CanAttack)">
+                            ATTACK
+                        </button>
+                    </form>
+                    @if (!Model.From.CanAttack)
+                    {
+                        <p class="small muted mt-2 mb-0">@Model.From.CountryName needs at least 2 soldiers to attack.</p>
+                    }
+                }
+                else
+                {
+                    <p class="muted mb-3">Click one of your countries, then a rival to target.</p>
+                }
+                <div class="d-flex gap-2 mt-2">
+                    <button type="button" class="btn btn-ghost flex-grow-1" data-open-modal="transfer">Transfer</button>
+                    <form asp-controller="Play" asp-action="EndTurn" asp-route-id="@g.Id" method="post" class="flex-grow-1 m-0">
+                        <button type="submit" class="btn btn-ghost w-100">@(g.AttackUsedThisTurn ? "End turn" : "Skip turn")</button>
+                    </form>
+                </div>
+            </div>
+        }
+        else if (!Model.IsOwner)
+        {
+            <div class="panel">
+                <p class="eyebrow">Watching</p>
+                <p>You're watching <strong>@g.OwnerName</strong>. Only they can play turns in this game.</p>
+                @if (User.Identity?.IsAuthenticated != true)
+                {
+                    <a class="btn btn-attack w-100" asp-controller="Account" asp-action="Register">Start your own campaign</a>
+                }
+            </div>
+        }
+
+        <div class="panel">
+            <p class="eyebrow">NPC decision log</p>
+            @if (Model.NpcLog.Count == 0)
+            {
+                <p class="muted small mb-0">No NPC moves yet.</p>
+            }
+            <div class="d-flex flex-column gap-2">
+                @foreach (var e in Model.NpcLog)
+                {
+                    var actor = g.Players.FirstOrDefault(p => p.Id == e.ActorPlayerId);
+                    <div class="log-card">
+                        <div class="who">R@(e.Round) · @(actor?.Name ?? "NPC")</div>
+                        <div>@e.Message</div>
+                        @if (!string.IsNullOrEmpty(e.Reason))
+                        {
+                            <div class="small fst-italic muted">Why: @e.Reason</div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- STANDINGS -->
+<div class="row g-3 mt-1">
+    @foreach (var s in Model.Standings())
+    {
+        <div class="col-6 col-md-3">
+            <div class="panel standing @(s.Css == "you" ? "turn-panel" : "")">
+                <div class="d-flex justify-content-between"><strong>@s.Name</strong><span>@s.Nations / 10</span></div>
+                <div class="card-bar"><span style="width:@(s.Nations * 10)%;@(s.Css == "you" ? "background:var(--you)" : "")"></span></div>
+                <small class="muted">@s.Soldiers soldiers</small>
+            </div>
+        </div>
+    }
+</div>
+
+@if (Model.CanPlay)
+{
+    <partial name="_MusterModal" model="Model" />
+}
+
+@section Scripts {
+    <script src="~/js/board.js" asp-append-version="true"></script>
+}

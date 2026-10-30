@@ -1,0 +1,119 @@
+﻿@model BoardViewModel
+@{
+    var g = Model.Game;
+    var mine = g.TerritoriesOf(Model.Human.Id);
+    bool reinforce = g.Phase == TurnPhase.Reinforce;
+    int toPlace = Model.Human.ReinforcementsToPlace;
+    var threat = g.Territories.Where(t => !Model.IsMine(t)).OrderByDescending(t => t.Soldiers).FirstOrDefault();
+}
+
+<div class="modal-backdrop-custom @(reinforce ? "open" : "")" id="muster">
+    <div class="muster-dialog panel" role="dialog" aria-modal="true" aria-labelledby="musterTitle">
+        <div class="d-flex justify-content-between align-items-start gap-3 mb-3 flex-wrap">
+            <div>
+                <p class="eyebrow">Round @g.Round · @(reinforce ? "Start of your turn" : "Regroup")</p>
+                <h2 id="musterTitle" class="h3 mb-0">Muster your forces</h2>
+            </div>
+            <div class="d-flex gap-2 align-items-center">
+                <div class="pill-group">
+                    <button type="button" class="pill @(reinforce ? "active" : "")" data-tab-btn="reinforce">Reinforce</button>
+                    <button type="button" class="pill @(!reinforce ? "active" : "")" data-tab-btn="transfer">Transfer</button>
+                </div>
+                @if (!reinforce)
+                {
+                    <button type="button" class="btn btn-ghost btn-sm" data-close>Close</button>
+                }
+            </div>
+        </div>
+
+        <!-- REINFORCE TAB -->
+        <form data-tab-panel="reinforce" asp-controller="Play" asp-action="Reinforce" asp-route-id="@g.Id"
+              method="post" class="@(reinforce ? "" : "d-none")" data-reinforce data-total="@toPlace">
+            @if (!reinforce)
+            {
+                <p class="muted mb-0">No reinforcements to place right now. From round 2, each turn starts with 2 new soldiers per country you control.</p>
+            }
+            else
+            {
+                <div class="row g-4 align-items-center">
+                    <div class="col-md-4 text-center">
+                        <div class="place-ring"><span data-left>@toPlace</span><small>left to place</small></div>
+                        <p class="mt-2 mb-2">@mine.Count nation@(mine.Count == 1 ? "" : "s") &times; 2 = <strong>@toPlace new soldiers</strong></p>
+                        <button type="button" class="btn btn-ghost btn-sm" data-auto-spread>Auto-spread evenly</button>
+                    </div>
+                    <div class="col-md-8 d-flex flex-column gap-2">
+                        @foreach (var t in mine.OrderByDescending(t => t.Soldiers))
+                        {
+                            <div class="muster-row" data-row>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between gap-2">
+                                        <strong>@t.CountryName</strong>
+                                        <span>@t.Soldiers &rarr; <b data-after>@t.Soldiers</b></span>
+                                    </div>
+                                    <div class="card-bar mt-1"><span style="width:@(Model.BarPercent(t))%"></span></div>
+                                </div>
+                                <button type="button" class="step-btn" data-minus aria-label="Remove one">&minus;</button>
+                                <span class="step-value">+<span data-value>0</span></span>
+                                <button type="button" class="step-btn plus" data-plus aria-label="Add one">+</button>
+                                <input type="hidden" name="placements[@t.CountryCode]" value="0" data-input data-base="@t.Soldiers" />
+                            </div>
+                        }
+                    </div>
+                </div>
+                @if (threat != null)
+                {
+                    <p class="small muted mt-3 mb-0">Biggest rival force on the board: @threat.CountryName (@threat.Soldiers).</p>
+                }
+                <div class="d-flex justify-content-between align-items-center mt-3 gap-2 flex-wrap">
+                    <span class="small muted">Place every new soldier before you attack.</span>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-ghost" data-reset>Reset</button>
+                        <button type="submit" class="btn btn-you" data-deploy disabled>Deploy <span data-placed>0</span> soldiers</button>
+                    </div>
+                </div>
+            }
+        </form>
+
+        <!-- TRANSFER TAB -->
+        <form data-tab-panel="transfer" asp-controller="Play" asp-action="Transfer" asp-route-id="@g.Id"
+              method="post" class="@(reinforce ? "d-none" : "")">
+            @if (reinforce)
+            {
+                <p class="muted mb-0">Place your reinforcements first, then you can transfer.</p>
+            }
+            else if (mine.Count < 2)
+            {
+                <p class="muted mb-0">You need at least two countries to transfer soldiers. Conquer one first!</p>
+            }
+            else
+            {
+                <div class="row g-3">
+                    <div class="col-md-5">
+                        <label class="form-label">From</label>
+                        <select name="from" class="form-select">
+                            @foreach (var t in mine.Where(t => t.Soldiers > 1).OrderByDescending(t => t.Soldiers))
+                            {
+                                <option value="@t.CountryCode">@t.CountryName (@t.Soldiers)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-5">
+                        <label class="form-label">To</label>
+                        <select name="to" class="form-select">
+                            @foreach (var t in mine.OrderBy(t => t.Soldiers))
+                            {
+                                <option value="@t.CountryCode">@t.CountryName (@t.Soldiers)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Soldiers</label>
+                        <input type="number" name="amount" min="1" value="1" class="form-control" />
+                    </div>
+                </div>
+                <p class="small muted mt-2">Each country must keep at least 1 soldier.</p>
+                <div class="text-end"><button type="submit" class="btn btn-you">Move soldiers</button></div>
+            }
+        </form>
+    </div>
+</div>
