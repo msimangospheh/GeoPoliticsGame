@@ -59,7 +59,7 @@ else if (g.Status == GameStatus.Lost)
                 var placed = Model.PlacedThisTurn(t);
 
                 <div class="island" style="left:@(pos.X)%;top:@(pos.Y)%"></div>
-                <a class="country-card board-card @css" style="left:@(pos.X)%;top:@(pos.Y)%" href="@link"
+                <a class="country-card board-card @css" style="left:@(pos.X)%;top:@(pos.Y)%" href="@(Model.CanPlay? link : null)"
                    title="@t.CountryName - @owner.Name">
                     <div class="d-flex justify-content-between align-items-center gap-3">
                         <span class="profile-badge sm @(mine ? "you" : "")">@owner.Badge</span>
@@ -142,7 +142,10 @@ else if (g.Status == GameStatus.Lost)
         }
 
         <div class="panel">
-            <p class="eyebrow">NPC decision log</p>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <p class="eyebrow mb-0">NPC decision log</p>
+                <a class="small" href="/Play/@g.Id/Ledger">Full log &rarr;</a>
+            </div>
             @if (Model.NpcLog.Count == 0)
             {
                 <p class="muted small mb-0">No NPC moves yet.</p>

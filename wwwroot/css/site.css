@@ -1151,3 +1151,124 @@ a.new-campaign-card {
         grid-template-columns: 1fr;
     }
 }
+
+/* ===== Phase 6: War Council Ledger ===== */
+.ledger-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1rem 1.1rem;
+    animation: rise .35s ease both;
+}
+
+    .ledger-card + .ledger-card {
+        margin-top: .75rem;
+    }
+
+.ledger-title {
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin: .4rem 0 .1rem;
+}
+
+.ledger-why {
+    font-style: italic;
+    color: var(--ink-soft);
+    margin: .35rem 0 .6rem;
+}
+
+    .ledger-why strong {
+        font-style: normal;
+        color: var(--npc-ink);
+    }
+
+.tag {
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    padding: .15rem .5rem;
+    border-radius: 6px;
+}
+
+.tag-attack {
+    background: rgba(244,63,94,.14);
+    color: var(--target-ink);
+}
+
+.tag-reinforce {
+    background: #fdecc8;
+    color: var(--npc-ink);
+}
+
+.tag-transfer {
+    background: var(--you-soft);
+    color: var(--you-ink);
+}
+
+.tag-other {
+    background: #e9dfd0;
+    color: var(--ink-soft);
+}
+
+.metric-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .4rem 1rem;
+}
+
+.metric {
+    font-size: .82rem;
+}
+
+    .metric .card-bar span.bar-target {
+        background: var(--target);
+    }
+
+    .metric .card-bar span.bar-npc {
+        background: var(--npc);
+    }
+
+    .metric .card-bar span.bar-you {
+        background: var(--you);
+    }
+
+.roster-row {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    padding: .7rem 0;
+    border-bottom: 1px dashed var(--line);
+}
+
+    .roster-row:last-child {
+        border-bottom: 0;
+    }
+
+.think-steps {
+    counter-reset: step;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 .8rem;
+}
+
+    .think-steps li {
+        counter-increment: step;
+        display: flex;
+        gap: .7rem;
+        align-items: flex-start;
+        margin-bottom: .7rem;
+    }
+
+        .think-steps li::before {
+            content: counter(step);
+            flex-shrink: 0;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: var(--npc-ink);
+            color: #fff;
+            font-size: .8rem;
+            font-weight: 700;
+        }

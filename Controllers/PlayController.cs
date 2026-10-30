@@ -44,6 +44,25 @@ namespace GeoPolitics_Game.Controllers
             return View(game.ActiveBattle != null ? "Battle" : "Board", model);
         }
 
+        // GET /Play/{id}/Ledger?show=attack   - every NPC decision with its reason (public, like the board)
+        [AllowAnonymous]
+        [HttpGet("/Play/{id}/Ledger")]
+        public async Task<IActionResult> Ledger(string id, string? show)
+        {
+            var game = await _games.GetByIdAsync(id);
+            if (game == null || game.Status == GameStatus.Setup) return NotFound();
+            if (!User.IsOwnerOf(game) && !game.Settings.AllowSpectators) return NotFound();
+
+            var entries = (await _events.GetForGameAsync(id))
+                .Where(e => e.IsNpc && !string.IsNullOrEmpty(e.Reason))
+                .Where(e => string.IsNullOrEmpty(show) || e.Category == show)
+                .Reverse()
+                .Take(150)
+                .ToList();
+
+            return View(new LedgerViewModel { Game = game, Entries = entries, Show = show });
+        }
+
         [HttpPost("/Play/{id}/Reinforce")]
         public Task<IActionResult> Reinforce(string id, Dictionary<string, int> placements) =>
             Act(id, game => _engine.PlaceReinforcements(game, game.HumanPlayerId, placements));

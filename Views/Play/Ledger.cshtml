@@ -1,0 +1,100 @@
+﻿@model LedgerViewModel
+@{
+    var g = Model.Game;
+    ViewData["Title"] = "War Council Ledger";
+
+    string TagText(GameEvent e) => e.Type == GameEventType.TurnSkipped ? "SKIP" : e.Category.ToUpperInvariant();
+    string BarClass(string label) => label switch
+    {
+        "Odds" or "Threat" or "Best odds" => "bar-target",
+        "Spoils" or "Garrison" => "bar-you",
+        _ => "bar-npc"
+    };
+    var filters = new[] { ("", "All"), ("attack", "Attacks"), ("reinforce", "Reinforcements"), ("transfer", "Transfers") };
+}
+
+<div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-3">
+    <div>
+        <p class="eyebrow">View NPC log · Game #@g.ShortCode</p>
+        <h1 class="mb-0">The War Council Ledger</h1>
+    </div>
+    <div class="d-flex gap-2 align-items-center flex-wrap">
+        <span class="panel py-2 px-3 small">Round @g.Round · every NPC move, with its reason</span>
+        <a class="btn btn-attack" href="/Play/@g.Id">Back to map</a>
+    </div>
+</div>
+
+<nav class="pill-group mb-3">
+    @foreach (var (key, label) in filters)
+    {
+        <a class="pill @((Model.Show ?? "") == key ? "active" : "")"
+           href="/Play/@g.Id/Ledger@(key == "" ? "" : "?show=" + key)">@label</a>
+    }
+</nav>
+
+<div class="row g-4">
+    <!-- Decisions -->
+    <div class="col-lg-7">
+        @if (Model.Entries.Count == 0)
+        {
+            <div class="panel muted">No NPC decisions recorded yet. Play a turn and the NPCs will explain themselves here.</div>
+        }
+        @foreach (var e in Model.Entries)
+        {
+            var actor = g.Players.FirstOrDefault(p => p.Id == e.ActorPlayerId);
+            <div class="ledger-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="tag tag-@e.Category">@TagText(e)</span>
+                    <span class="small muted">R@(e.Round) · move @e.Move</span>
+                </div>
+                <div class="ledger-title">@e.Message</div>
+                <div class="small muted">@(actor?.Name ?? "NPC")</div>
+                <div class="ledger-why"><strong>Why:</strong> @e.Reason</div>
+                @if (e.Metrics is { Count: > 0 })
+                {
+                    <div class="metric-grid">
+                        @foreach (var m in e.Metrics)
+                        {
+                            <div class="metric">
+                                <div class="d-flex justify-content-between"><span>@m.Label</span><span>@m.Percent%</span></div>
+                                <div class="card-bar"><span class="@BarClass(m.Label)" style="width:@(m.Percent)%"></span></div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- Roster + how they think -->
+    <div class="col-lg-5 d-flex flex-column gap-3">
+        <div class="panel">
+            <p class="eyebrow">The roster</p>
+            @foreach (var profile in new[] { NpcProfile.Aggressor, NpcProfile.Defender, NpcProfile.Opportunist })
+            {
+                var ids = g.Players.Where(p => p.Profile == profile && !p.IsEliminated).Select(p => p.Id).ToList();
+                if (ids.Count == 0) { continue; }
+                var owned = g.Territories.Where(t => ids.Contains(t.OwnerPlayerId)).ToList();
+                <div class="roster-row">
+                    <span class="profile-badge">@profile.ToString()[..1]</span>
+                    <div class="flex-grow-1">
+                        <strong>The @profile</strong>
+                        <div class="small muted">@ProfileInfo.Describe(profile)</div>
+                    </div>
+                    <span class="small text-end">@owned.Count countries<br />@owned.Sum(t => t.Soldiers) soldiers</span>
+                </div>
+            }
+        </div>
+
+        <div class="panel">
+            <p class="eyebrow">How an NPC thinks</p>
+            <ol class="think-steps">
+                <li><span><strong>Scan</strong> every country it could attack.</span></li>
+                <li><span><strong>Score</strong> odds &times; spoils, plus a bonus for hitting the leader or knocking a rival out, minus the risk to its army.</span></li>
+                <li><span><strong>Decide:</strong> attack the best target above its attack line, else skip. After every roll, retreat if the odds fall below its retreat line.</span></li>
+                <li><span><strong>Explain</strong> the decision in one sentence for this ledger.</span></li>
+            </ol>
+            <p class="small muted mb-0">Difficulty: <strong>@g.Difficulty</strong> · @ProfileInfo.DescribeDifficulty(g.Difficulty)</p>
+        </div>
+    </div>
+</div>

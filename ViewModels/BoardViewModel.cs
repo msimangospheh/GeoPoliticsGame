@@ -37,10 +37,9 @@ namespace GeoPolitics_Game.ViewModels
                    ?? game.TerritoriesOf(Human.Id).OrderByDescending(t => t.Soldiers).FirstOrDefault();
             To = game.Territories.FirstOrDefault(t => t.CountryCode == toCode && t.OwnerPlayerId != Human.Id);
 
-            NpcLog = events.Where(e => e.IsNpc && e.Type is GameEventType.Reinforced or GameEventType.AttackStarted
-                                                       or GameEventType.Transferred or GameEventType.TurnSkipped
-                                                       or GameEventType.Conquered)
-                           .Reverse().Take(4).ToList();
+            // Latest NPC decisions that have a reason (dice rolls are left for the full ledger)
+            NpcLog = events.Where(e => e.IsNpc && !string.IsNullOrEmpty(e.Reason) && e.Type != GameEventType.DiceRolled)
+                           .Reverse().Take(3).ToList();
 
             MaxSoldiers = Math.Max(1, game.Territories.Max(t => t.Soldiers));
         }

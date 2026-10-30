@@ -42,6 +42,7 @@ namespace GeoPolitics_Game.Models
         public string? FromCode { get; set; }
         public string? ToCode { get; set; }
         public int? Amount { get; set; }
+        public Dictionary<string, int>? Placements { get; set; }   // reinforcements per country (for replays)
         public List<int>? AttackerDice { get; set; }
         public List<int>? DefenderDice { get; set; }
         public int? AttackerLosses { get; set; }

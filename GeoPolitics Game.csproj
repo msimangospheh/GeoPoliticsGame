@@ -6,6 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<RootNamespace>GeoPolitics_Game</RootNamespace>
 		<UserSecretsId>29ee05cc-0ca0-43ff-a803-0cc807719e0b</UserSecretsId>
+	    <UseAppHost>false</UseAppHost>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -30,7 +30,7 @@ builder.Services.AddScoped<DatabaseSeeder>();
 // ---- Game engine ----
 builder.Services.AddSingleton<IRandomSource, SecureRandomSource>();
 builder.Services.AddSingleton<IGameEngine, GameEngine>();
-builder.Services.AddScoped<INpcPlayer, PassiveNpcPlayer>();   // placeholder until Phase 6
+builder.Services.AddScoped<INpcPlayer, NpcBrain>();   // NPCs that play to win
 builder.Services.AddScoped<IGameService, GameService>();
 
 // ---- Login: ASP.NET Identity, users stored in MongoDB ----

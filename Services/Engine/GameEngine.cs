@@ -103,8 +103,9 @@ namespace GeoPolitics_Game.Services.Engine
             game.Phase = TurnPhase.Main;
 
             var events = new List<GameEvent>();
-            Record(game, events, GameEventType.Reinforced, playerId, $"Placed {string.Join(", ", parts)}.")
-                .Amount = total;
+            var e = Record(game, events, GameEventType.Reinforced, playerId, $"Placed {string.Join(", ", parts)}.");
+            e.Amount = total;
+            e.Placements = new Dictionary<string, int>(game.PlacedThisTurn);
             return events;
         }
 
@@ -279,7 +280,7 @@ namespace GeoPolitics_Game.Services.Engine
             foreach (var country in rivals)
             {
                 var profile = (NpcProfile)(_random.Next(3) + 1);   // Aggressor, Defender or Opportunist
-                var npc = new PlayerState { Name = $"The {profile}", HomeCountryCode = country.Code, Profile = profile };
+                var npc = new PlayerState { Name = $"The {profile} ({country.Name})", HomeCountryCode = country.Code, Profile = profile };
                 game.Players.Add(npc);
                 game.Territories.Add(NewTerritory(country, npc.Id));
             }

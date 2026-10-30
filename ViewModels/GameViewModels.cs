@@ -47,6 +47,14 @@ namespace GeoPolitics_Game.ViewModels
         public Game Game { get; set; } = new();
     }
 
+    // The War Council Ledger
+    public class LedgerViewModel
+    {
+        public Game Game { get; set; } = new();
+        public List<GameEvent> Entries { get; set; } = new();
+        public string? Show { get; set; }   // null = all, or "attack" / "reinforce" / "transfer"
+    }
+
     // What the Launch form sends
     public class LaunchForm
     {
