@@ -22,15 +22,18 @@ namespace GeoPolitics_Game.ViewModels
         public Territory? To { get; }
         public List<GameEvent> NpcLog { get; }
         public int MaxSoldiers { get; }
+        public string? ReplayJson { get; }
+        public bool IsReplay => ReplayJson != null;
 
-        public BoardViewModel(Game game, bool isOwner, string? fromCode, string? toCode, List<GameEvent> events)
+        public BoardViewModel(Game game, bool isOwner, string? fromCode, string? toCode, List<GameEvent> events,
+                      string? replayJson = null)
         {
             Game = game;
             IsOwner = isOwner;
             Human = game.GetPlayer(game.HumanPlayerId);
 
-            // Buttons only for the owner, only on their turn, only while the game is running
-            CanPlay = isOwner && game.Status == GameStatus.InProgress && game.CurrentPlayerId == game.HumanPlayerId;
+            ReplayJson = replayJson;
+            CanPlay = !IsReplay && isOwner && game.Status == GameStatus.InProgress && game.CurrentPlayerId == game.HumanPlayerId;
 
             // Planned attack: "from" must be yours, "to" must be a rival's
             From = game.Territories.FirstOrDefault(t => t.CountryCode == fromCode && t.OwnerPlayerId == Human.Id)

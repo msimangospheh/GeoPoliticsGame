@@ -113,7 +113,7 @@ namespace GeoPolitics_Game.Controllers
                 };
                 var game = await _service.LaunchAsync(id, User.GetUserId(), form.Difficulty, settings);
                 TempData["Success"] = $"Campaign #{game.ShortCode} launched! The server has rolled for turn order.";
-                return RedirectToAction(nameof(Index));
+                return Redirect($"/Play/{game.Id}?replay=true");
             }
             catch (Exception ex) when (IsGameError(ex)) { return HandleError(ex, id); }
         }

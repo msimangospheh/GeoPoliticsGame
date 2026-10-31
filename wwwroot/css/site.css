@@ -1272,3 +1272,145 @@ a.new-campaign-card {
             font-size: .8rem;
             font-weight: 700;
         }
+
+/* ===== Phase 6B: NPC turn playback ===== */
+.npc-banner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+    background: #fdf1d8;
+    border: 2px solid var(--npc);
+    box-shadow: 0 0 24px rgba(245,158,11,.25);
+}
+
+.banner-badge {
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--npc);
+    color: #3a1d02;
+    font-family: Cinzel, serif;
+    font-size: 1.5rem;
+    font-weight: 900;
+    animation: pulse-ring 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse-ring {
+    50% {
+        box-shadow: 0 0 0 10px rgba(245,158,11,.18);
+    }
+}
+
+.npc-banner .pill {
+    border: 0;
+    background: transparent;
+}
+
+    .npc-banner .pill.active {
+        background: var(--npc);
+        color: #3a1d02;
+    }
+
+.banner-progress {
+    min-width: 180px;
+}
+
+    .banner-progress .card-bar span {
+        background: var(--npc);
+    }
+
+.replay-strip {
+    margin-bottom: 1rem;
+    border: 2px solid var(--target);
+    animation: rise .3s ease both;
+}
+
+.strip-dice {
+    display: flex;
+    gap: .8rem;
+    flex-wrap: wrap;
+    margin-top: .5rem;
+}
+
+.strip-pair {
+    display: inline-flex;
+    gap: .25rem;
+}
+
+.die.sm {
+    width: 34px;
+    height: 34px;
+    font-size: 1rem;
+    border-radius: 8px;
+}
+
+.board-card.attacking {
+    outline: 3px solid var(--npc);
+    outline-offset: 2px;
+}
+
+.board-card .soldiers {
+    display: inline-block;
+}
+
+.board-card.bump .soldiers {
+    animation: bump .45s ease;
+}
+
+@keyframes bump {
+    40% {
+        transform: scale(1.35);
+    }
+}
+
+.float-badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    z-index: 3;
+    padding: .1rem .5rem;
+    border-radius: 999px;
+    white-space: nowrap;
+    background: var(--you);
+    color: #fff;
+    font-size: .8rem;
+    font-weight: 700;
+    pointer-events: none;
+    animation: float-up 1.4s ease forwards;
+}
+
+    .float-badge.bad {
+        background: var(--target);
+    }
+
+@keyframes float-up {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 6px);
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+        transform: translate(-50%, -26px);
+    }
+}
+
+.log-card.fresh {
+    border-left: 3px solid var(--npc);
+    animation: rise .4s ease both;
+}
+
+@media (max-width: 767px) {
+    .board-card {
+        position: relative;
+    }
+}

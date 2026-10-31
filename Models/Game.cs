@@ -36,6 +36,7 @@ namespace GeoPolitics_Game.Models
         public List<Territory> Territories { get; set; } = new();
         public BattleState? ActiveBattle { get; set; }
         public List<RoundSnapshot> History { get; set; } = new();
+        public ReplayInfo? Replay { get; set; }                       // NPC moves to play back to the owner
 
         public string? WinnerPlayerId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -176,5 +177,20 @@ namespace GeoPolitics_Game.Models
     {
         public int Round { get; set; }
         public Dictionary<string, int> TerritoriesByPlayer { get; set; } = new();
+    }
+
+    // The board just before the NPCs moved, so the owner can watch the replay
+    public class ReplayInfo
+    {
+        public int FromSeq { get; set; }      // first event to replay
+        public int Round { get; set; }
+        public List<TerritoryState> Territories { get; set; } = new();
+    }
+
+    public class TerritoryState
+    {
+        public string CountryCode { get; set; } = string.Empty;
+        public string OwnerPlayerId { get; set; } = string.Empty;
+        public int Soldiers { get; set; }
     }
 }

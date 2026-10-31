@@ -1,4 +1,5 @@
-﻿using GeoPolitics_Game.Data.Repositories;
+﻿using System.Text.Json;
+using GeoPolitics_Game.Data.Repositories;
 using GeoPolitics_Game.Models;
 using GeoPolitics_Game.Security;
 using GeoPolitics_Game.Services;
@@ -25,11 +26,11 @@ namespace GeoPolitics_Game.Controllers
             _engine = engine;
         }
 
-        // GET /Play/{id}?from=ZA&to=IN
+        // GET /Play/{id}?from=ZA&to=IN&replay=true
         // ...but WATCHING is open to anyone with the link (if the owner allowed spectators)
         [AllowAnonymous]
         [HttpGet("/Play/{id}")]
-        public async Task<IActionResult> Index(string id, string? from, string? to)
+        public async Task<IActionResult> Index(string id, string? from, string? to, bool replay = false)
         {
             var game = await _games.GetByIdAsync(id);
             if (game == null || game.Status == GameStatus.Setup) return NotFound();
@@ -38,10 +39,19 @@ namespace GeoPolitics_Game.Controllers
             if (!isOwner && !game.Settings.AllowSpectators) return NotFound();
 
             var events = await _events.GetForGameAsync(id);
-            var model = new BoardViewModel(game, isOwner, from, to, events);
+            string? replayJson = null;
 
-            // An attack in progress shows the battle screen; otherwise the board
-            return View(game.ActiveBattle != null ? "Battle" : "Board", model);
+            // Right after the owner's turn: rewind the board and let the browser play the NPC moves back
+            if (replay && isOwner && game.Replay is { } info)
+            {
+                var npcMoves = events.Where(e => e.Seq >= info.FromSeq).ToList();
+                events = events.Where(e => e.Seq < info.FromSeq).ToList();
+                RewindForReplay(game, info);
+                replayJson = BuildReplayJson(game, npcMoves);
+            }
+
+            var model = new BoardViewModel(game, isOwner, from, to, events, replayJson);
+            return View(game.ActiveBattle != null && replayJson == null ? "Battle" : "Board", model);
         }
 
         // GET /Play/{id}/Ledger?show=attack   - every NPC decision with its reason (public, like the board)
@@ -94,14 +104,17 @@ namespace GeoPolitics_Game.Controllers
             {
                 var events = await _service.PlayAsync(id, User.GetUserId(), action);
 
-                var headline = events.LastOrDefault(e => e.Type is GameEventType.Conquered or GameEventType.AttackFailed
-                                                         or GameEventType.Retreated or GameEventType.GameWon
-                                                         or GameEventType.GameLost);
+                // Only headline the PLAYER's own result - the replay will show what the NPCs did
+                var headline = events.LastOrDefault(e => !e.IsNpc && e.Type is GameEventType.Conquered
+                                                         or GameEventType.AttackFailed or GameEventType.Retreated
+                                                         or GameEventType.GameWon);
                 if (headline != null)
-                    TempData[headline.Type is GameEventType.AttackFailed or GameEventType.GameLost ? "Error" : "Success"]
-                        = headline.Message;
+                    TempData[headline.Type == GameEventType.AttackFailed ? "Error" : "Success"] = headline.Message;
 
-                return RedirectToAction(nameof(Index), new { id });
+                bool npcMoved = events.Any(e => e.IsNpc);
+                return npcMoved
+                    ? RedirectToAction(nameof(Index), new { id, replay = true })
+                    : RedirectToAction(nameof(Index), new { id });
             }
             catch (GameRuleException ex)
             {
@@ -112,6 +125,49 @@ namespace GeoPolitics_Game.Controllers
             {
                 return NotFound();   // not your game: don't reveal anything
             }
+        }
+
+        // Puts the board back to how it looked before the NPCs moved (in memory only - nothing is saved)
+        private static void RewindForReplay(Game game, ReplayInfo info)
+        {
+            foreach (var state in info.Territories)
+            {
+                var t = game.Territories.FirstOrDefault(x => x.CountryCode == state.CountryCode);
+                if (t == null) continue;
+                t.OwnerPlayerId = state.OwnerPlayerId;
+                t.Soldiers = state.Soldiers;
+            }
+            game.Round = info.Round;
+            game.PlacedThisTurn.Clear();
+            game.Status = GameStatus.InProgress;   // don't spoil the ending before the replay shows it
+        }
+
+        // The NPC moves, packaged as JSON for wwwroot/js/replay.js
+        private static string BuildReplayJson(Game game, List<GameEvent> moves)
+        {
+            var data = new
+            {
+                human = game.HumanPlayerId,
+                players = game.Players.Select(p => new { id = p.Id, name = p.Name, badge = p.Badge, human = p.IsHuman }),
+                events = moves.Select(e => new
+                {
+                    type = e.Type.ToString(),
+                    actor = e.ActorPlayerId,
+                    round = e.Round,
+                    message = e.Message,
+                    reason = e.Reason,
+                    from = e.FromCode,
+                    to = e.ToCode,
+                    amount = e.Amount,
+                    placements = e.Placements,
+                    aDice = e.AttackerDice,
+                    dDice = e.DefenderDice,
+                    aLoss = e.AttackerLosses,
+                    dLoss = e.DefenderLosses
+                })
+            };
+            // The default encoder escapes <, > and & so the JSON is safe to put inside a <script> tag
+            return JsonSerializer.Serialize(data);
         }
     }
 }

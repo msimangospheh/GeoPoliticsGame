@@ -68,10 +68,17 @@ namespace GeoPolitics_Game.Services
             game.Settings = settings;
 
             var events = _engine.Launch(game);
-            events.AddRange(PlayNpcTurns(game));
-
-            await SaveAsync(game, events);
+            await RunNpcTurnsAndSaveAsync(game, events);
             return game;
+        }
+
+        // Runs one move for the human (attack, roll, transfer...), then lets NPCs play, then saves.
+        public async Task<List<GameEvent>> PlayAsync(string gameId, string userId, Func<Game, List<GameEvent>> action)
+        {
+            var game = await GetOwnedAsync(gameId, userId);
+            var events = action(game);
+            await RunNpcTurnsAndSaveAsync(game, events);
+            return events;
         }
 
         // ACCESS CONTROL: only the owner gets the game back
@@ -91,15 +98,36 @@ namespace GeoPolitics_Game.Services
             await _games.DeleteAsync(game.Id);
         }
 
-        // Runs one move for the human (attack, roll, transfer...), then lets NPCs play, then saves.
-        // GetOwnedAsync makes sure only the owner can do this.
-        public async Task<List<GameEvent>> PlayAsync(string gameId, string userId, Func<Game, List<GameEvent>> action)
+        // Lets the NPCs play, remembers how the board looked first (for the replay), then saves everything
+        private async Task RunNpcTurnsAndSaveAsync(Game game, List<GameEvent> events)
         {
-            var game = await GetOwnedAsync(gameId, userId);
-            var events = action(game);
+            var before = game.Territories
+                .Select(t => new TerritoryState { CountryCode = t.CountryCode, OwnerPlayerId = t.OwnerPlayerId, Soldiers = t.Soldiers })
+                .ToList();
+            int firstNpcEvent = events.Count;
+
             events.AddRange(PlayNpcTurns(game));
-            await SaveAsync(game, events);
-            return events;
+            bool npcMoved = events.Skip(firstNpcEvent).Any(e => e.IsNpc);
+
+            await _events.AddManyAsync(events);   // gives every event its Seq number
+
+            if (npcMoved)
+            {
+                // Replay from the first event that isn't the human's (e.g. "Round 2: The Aggressor receives 4")
+                int start = events.FindIndex(e => e.ActorPlayerId != game.HumanPlayerId);
+                game.Replay = new ReplayInfo
+                {
+                    FromSeq = events[start].Seq,
+                    Round = events[start].Round,
+                    Territories = before
+                };
+            }
+            else
+            {
+                game.Replay = null;
+            }
+
+            await _games.ReplaceAsync(game);
         }
 
         // NPCs take their turns until it's the human's turn again (or the game ends)
@@ -114,12 +142,6 @@ namespace GeoPolitics_Game.Services
                 events.AddRange(_npc.PlayTurn(game));
             }
             return events;
-        }
-
-        private async Task SaveAsync(Game game, List<GameEvent> events)
-        {
-            await _events.AddManyAsync(events);
-            await _games.ReplaceAsync(game);
         }
     }
 }

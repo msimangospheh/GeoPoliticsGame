@@ -22,6 +22,27 @@
 </div>
 
 <partial name="_Messages" />
+@if (Model.IsReplay)
+{
+    <div class="panel npc-banner">
+        <span class="banner-badge" data-banner-badge>A</span>
+        <div class="flex-grow-1">
+            <p class="eyebrow mb-0" data-banner-round>NPC turn</p>
+            <h2 class="h3 mb-0" data-banner-title>The NPCs are moving</h2>
+        </div>
+        <div class="pill-group" role="group" aria-label="Playback speed">
+            <button type="button" class="pill" data-speed="1">1&times;</button>
+            <button type="button" class="pill" data-speed="2">2&times;</button>
+            <button type="button" class="pill" data-speed="4">4&times; &#9656;&#9656;</button>
+        </div>
+        <div class="banner-progress">
+            <small data-banner-left>Your turn soon</small>
+            <div class="card-bar mt-1"><span data-banner-bar style="width:0%"></span></div>
+        </div>
+    </div>
+    <div class="panel replay-strip d-none" data-strip></div>
+    <script type="application/json" id="replay-data">@Html.Raw(Model.ReplayJson)</script>
+}
 
 @if (g.Status == GameStatus.Won)
 {
@@ -60,10 +81,10 @@ else if (g.Status == GameStatus.Lost)
 
                 <div class="island" style="left:@(pos.X)%;top:@(pos.Y)%"></div>
                 <a class="country-card board-card @css" style="left:@(pos.X)%;top:@(pos.Y)%" href="@(Model.CanPlay? link : null)"
-                   title="@t.CountryName - @owner.Name">
+                   data-code="@t.CountryCode" data-x="@pos.X" data-y="@pos.Y" title="@t.CountryName - @owner.Name">
                     <div class="d-flex justify-content-between align-items-center gap-3">
-                        <span class="profile-badge sm @(mine ? "you" : "")">@owner.Badge</span>
-                        <span class="soldiers">@t.Soldiers</span>
+                        <span class="profile-badge sm @(mine ? "you" : "")" data-badge>@owner.Badge</span>
+                        <span class="soldiers" data-soldiers>@t.Soldiers</span>
                     </div>
                     <div class="card-name">@t.CountryName</div>
                     <div class="card-bar"><span style="width:@(Model.BarPercent(t))%"></span></div>
@@ -129,6 +150,13 @@ else if (g.Status == GameStatus.Lost)
                 </div>
             </div>
         }
+        else if (Model.IsReplay)
+        {
+            <div class="panel">
+                <p class="eyebrow">NPC turns</p>
+                <p class="mb-0">The rivals are taking their turns. Their decisions appear in the log below as they happen, and your controls return when it's your turn.</p>
+            </div>
+        }
         else if (!Model.IsOwner)
         {
             <div class="panel">
@@ -150,7 +178,7 @@ else if (g.Status == GameStatus.Lost)
             {
                 <p class="muted small mb-0">No NPC moves yet.</p>
             }
-            <div class="d-flex flex-column gap-2">
+            <div class="d-flex flex-column gap-2" id="npc-log-list">
                 @foreach (var e in Model.NpcLog)
                 {
                     var actor = g.Players.FirstOrDefault(p => p.Id == e.ActorPlayerId);
@@ -189,4 +217,8 @@ else if (g.Status == GameStatus.Lost)
 
 @section Scripts {
     <script src="~/js/board.js" asp-append-version="true"></script>
+    @if (Model.IsReplay)
+    {
+        <script src="~/js/replay.js" asp-append-version="true"></script>
+    }
 }
