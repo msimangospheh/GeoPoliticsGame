@@ -55,6 +55,28 @@ namespace GeoPolitics_Game.ViewModels
         public string? Show { get; set; }   // null = all, or "attack" / "reinforce" / "transfer"
     }
 
+    // Landing page + Watch live page
+    public class HomeViewModel
+    {
+        public List<Game> LiveGames { get; set; } = new();
+
+        // A short status for each live game, e.g. ("BATTLE", "target", "Commander Sphe storms India")
+        public static (string Label, string Css, string Headline) Describe(Game g)
+        {
+            if (g.ActiveBattle is { } battle)
+            {
+                var target = g.Territories.FirstOrDefault(t => t.CountryCode == battle.DefenderCode)?.CountryName
+                             ?? battle.DefenderCode;
+                return ("BATTLE", "target", $"{g.OwnerName} storms {target}");
+            }
+
+            int held = g.TerritoryCount(g.HumanPlayerId);
+            return held >= 7
+                ? ("NEARS VICTORY", "you", $"{g.OwnerName} holds {held} of 10 nations")
+                : ("IN PROGRESS", "npc", $"{g.OwnerName} holds {held} nation{(held == 1 ? "" : "s")}");
+        }
+    }
+
     // What the Launch form sends
     public class LaunchForm
     {

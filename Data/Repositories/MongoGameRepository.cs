@@ -40,5 +40,12 @@ namespace GeoPolitics_Game.Data.Repositories
             if (!ObjectId.TryParse(id, out _)) return;
             await _games.DeleteOneAsync(g => g.Id == id);
         }
+
+        // Public games in progress, most recently played first (for "Live now")
+        public async Task<List<Game>> GetLiveAsync(int limit) =>
+            await _games.Find(g => g.Status == GameStatus.InProgress && g.Settings.AllowSpectators)
+                        .SortByDescending(g => g.UpdatedAt)
+                        .Limit(limit)
+                        .ToListAsync();
     }
 }

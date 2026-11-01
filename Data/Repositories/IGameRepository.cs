@@ -9,5 +9,6 @@ namespace GeoPolitics_Game.Data.Repositories
         Task<List<Game>> GetByOwnerAsync(string ownerUserId, GameStatus? status = null);
         Task<bool> ReplaceAsync(Game game);
         Task DeleteAsync(string id);
+        Task<List<Game>> GetLiveAsync(int limit);
     }
 }

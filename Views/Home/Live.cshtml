@@ -1,0 +1,10 @@
+﻿@model HomeViewModel
+@{
+    ViewData["Title"] = "Watch live";
+}
+
+<p class="eyebrow">Spectate</p>
+<h1 class="mb-2">Watch live</h1>
+<p class="muted mb-4">Public campaigns being played right now. Click one to watch. Only its commander can make moves.</p>
+
+<partial name="_LiveList" model="Model.LiveGames" />

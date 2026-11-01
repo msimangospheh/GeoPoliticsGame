@@ -1414,3 +1414,234 @@ a.new-campaign-card {
         position: relative;
     }
 }
+
+/* ===== Phase 7B: landing page ===== */
+.hero {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    padding: 2.5rem 0 4rem;
+}
+
+.hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .35rem .9rem;
+    border: 1px solid var(--gold);
+    border-radius: 999px;
+    background: rgba(244,236,225,.6);
+    color: var(--npc-ink);
+    font-weight: 600;
+    font-size: .9rem;
+}
+
+    .hero-tag::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--npc);
+    }
+
+.hero h1 {
+    font-size: clamp(2.6rem, 6vw, 4.8rem);
+    font-weight: 900;
+    line-height: 1.02;
+    margin: 1.2rem 0;
+}
+
+    .hero h1 .gold {
+        background: linear-gradient(90deg, #6b4a12, var(--gold), #8a6414);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+.hero-lead {
+    max-width: 34rem;
+    font-size: 1.2rem;
+    color: var(--ink-soft);
+}
+
+.legend-dots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem;
+    color: var(--ink-soft);
+    font-size: .9rem;
+}
+
+    .legend-dots span::before {
+        content: "";
+        display: inline-block;
+        width: 9px;
+        height: 9px;
+        margin-right: .4rem;
+        border-radius: 2px;
+        vertical-align: middle;
+    }
+
+    .legend-dots .dot-you::before {
+        background: var(--you);
+    }
+
+    .legend-dots .dot-npc::before {
+        background: var(--npc);
+    }
+
+    .legend-dots .dot-target::before {
+        background: var(--target);
+    }
+
+.hero-board {
+    aspect-ratio: 5 / 4;
+    box-shadow: 0 30px 60px rgba(58,42,30,.18);
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.board-card.demo {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    min-width: 0;
+    padding: .5rem .8rem;
+    animation: fade-in .6s ease both;
+}
+
+    .board-card.demo .soldiers {
+        font-size: 1.5rem;
+    }
+
+    .board-card.demo .card-name {
+        margin: 0;
+    }
+
+    .board-card.demo.target {
+        animation: fade-in .6s ease both, target-pulse 1.6s ease-in-out infinite;
+    }
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+}
+
+.board-caption {
+    position: absolute;
+    z-index: 2;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 2rem 0 1.2rem;
+}
+
+.step-card {
+    height: 100%;
+    padding: 1.5rem;
+    animation: rise .5s ease both;
+}
+
+    .step-card .numeral {
+        margin-bottom: .8rem;
+        font-family: Cinzel, serif;
+        font-size: 2.6rem;
+        font-weight: 900;
+        line-height: 1;
+    }
+
+.feature-card {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    height: 100%;
+    padding: 1.5rem;
+    transition: transform .2s, box-shadow .2s;
+}
+
+    .feature-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 28px rgba(58,42,30,.12);
+    }
+
+.feature-icon {
+    width: 72px;
+    height: 72px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+}
+
+.live-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: .9rem 1.1rem;
+    border-bottom: 1px dashed var(--line);
+    color: var(--ink);
+    text-decoration: none;
+    transition: background .15s;
+}
+
+    .live-row:last-child {
+        border-bottom: 0;
+    }
+
+    .live-row:hover {
+        background: rgba(201,180,155,.2);
+        color: var(--ink);
+    }
+
+.live-dot {
+    padding: .2rem .65rem;
+    border-radius: 999px;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+}
+
+    .live-dot::before {
+        content: "\25CF";
+        margin-right: .35rem;
+        animation: blink 1.4s infinite;
+    }
+
+@keyframes blink {
+    50% {
+        opacity: .3;
+    }
+}
+
+@media (max-width: 991px) {
+    .hero {
+        grid-template-columns: 1fr;
+        padding-top: 1rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .board-caption {
+        display: none;
+    }
+}

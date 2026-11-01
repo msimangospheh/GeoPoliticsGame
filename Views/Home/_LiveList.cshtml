@@ -1,0 +1,17 @@
+﻿@model List<GeoPolitics_Game.Models.Game>
+
+<div class="panel p-0 overflow-hidden">
+    @if (Model.Count == 0)
+    {
+        <p class="muted p-3 mb-0">No public campaigns are being played right now. Start one and share the link!</p>
+    }
+    @foreach (var g in Model)
+    {
+        var (label, css, headline) = HomeViewModel.Describe(g);
+        <a class="live-row" href="/Play/@g.Id">
+            <span class="small fw-semibold muted">Game #@g.ShortCode · Round @g.Round</span>
+            <span class="live-dot badge-@css">@label</span>
+            <span class="fw-semibold flex-grow-1 text-end">@headline</span>
+        </a>
+    }
+</div>

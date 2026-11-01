@@ -1,8 +1,120 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model HomeViewModel
+@using GeoPolitics_Game.Services.Engine
+@{
+    ViewData["Title"] = "Ten nations. One throne.";
+
+    // The example board in the hero (name, soldiers, colour, position %)
+    var demo = new (string Name, int Soldiers, string Css, int X, int Y)[]
+    {
+        ("Germany", 6, "npc", 20, 20), ("Vatican City", 1, "npc", 50, 11), ("India", 9, "npc target", 80, 24),
+        ("Egypt", 7, "npc", 15, 50), ("South Africa", 5, "you", 49, 54), ("Japan", 7, "npc", 82, 56),
+        ("Brazil", 9, "npc", 24, 84), ("Australia", 4, "npc", 74, 86)
+    };
+    int demoOdds = BattleOdds.AsPercent(5, 9);   // real odds for 5 soldiers attacking 9
+    var firstLive = Model.LiveGames.FirstOrDefault();
+
+    var steps = new (string Numeral, string Colour, string Title, string Text)[]
+    {
+        ("I", "var(--gold)", "Choose your homeland", "Nine rivals are drawn at random. Soldiers are set by each nation's population."),
+        ("II", "#b8892c", "Roll for the first turn", "Fate decides who strikes first. From round two, every nation you hold pays 2 soldiers."),
+        ("III", "var(--target)", "Attack, then regroup", "One attack per turn, die against die. Retreat when the odds turn, transfer troops when it's quiet."),
+        ("IV", "var(--you)", "Conquer all ten", "Each conquest pays the greater of 2 soldiers or half its value. Hold every flag to win.")
+    };
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- ===== HERO ===== -->
+<section class="hero">
+    <div>
+        <span class="hero-tag">Single-player · 10 nations · 1 world</span>
+        <h1>Ten nations.<br /><span class="gold">One throne.</span></h1>
+        <p class="hero-lead">Pick your homeland, roll the dice and outwit rivals who play to win, while an AI chronicler narrates every clash as it happens.</p>
+
+        <div class="d-flex gap-3 flex-wrap my-4">
+            <a class="btn btn-attack btn-lg px-4 py-3" asp-controller="Games" asp-action="New">&#9876; Start a campaign</a>
+            <a class="btn btn-ghost btn-lg px-4 py-3" href="@(firstLive != null ? $"/Play/{firstLive.Id}" : Url.Action("Live"))">&#9655; Watch a live game</a>
+        </div>
+
+        <div class="legend-dots">
+            <span class="dot-you">You</span><span class="dot-npc">NPC rivals</span><span class="dot-target">Under attack</span>
+        </div>
+    </div>
+
+    <div class="board hero-board" role="img" aria-label="Example board: South Africa targets India">
+        <svg class="board-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <line x1="49" y1="54" x2="80" y2="24" class="attack-line" />
+        </svg>
+        @for (int i = 0; i < demo.Length; i++)
+        {
+            var c = demo[i];
+            <div class="island" style="left:@(c.X)%;top:@(c.Y)%"></div>
+            <div class="country-card board-card demo @c.Css" style="left:@(c.X)%;top:@(c.Y)%;animation-delay:@(i * 90)ms">
+                <span class="soldiers">@c.Soldiers</span>
+                <span class="card-name">@c.Name</span>
+            </div>
+        }
+        <span class="board-caption" style="left:80%;top:31%;color:var(--target-ink)">Target · @demoOdds% odds</span>
+        <span class="board-caption" style="left:49%;top:61%;color:var(--you-ink)">Your homeland</span>
+    </div>
+</section>
+
+<!-- ===== HOW TO PLAY ===== -->
+<section id="how-to-play">
+    <div class="section-head">
+        <h2 class="mb-0">How a campaign unfolds</h2>
+        <p class="muted mb-0">Four moves stand between you and the world.</p>
+    </div>
+    <div class="row g-3">
+        @for (int i = 0; i < steps.Length; i++)
+        {
+            var s = steps[i];
+            <div class="col-md-6 col-lg-3">
+                <div class="panel step-card" style="animation-delay:@(i * 100)ms">
+                    <div class="numeral" style="color:@s.Colour">@s.Numeral</div>
+                    <h3 class="h5">@s.Title</h3>
+                    <p class="muted mb-0">@s.Text</p>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section class="row g-3 mt-4">
+    <div class="col-md-6">
+        <div class="panel feature-card">
+            <div class="feature-icon gap-1"><span class="die sm win">5</span><span class="die sm lose">3</span></div>
+            <div><h3 class="h5">Dice that hit hard</h3><p class="muted mb-0">Every duel is rolled on the server, die against die, and the fallen soldiers drop off the board.</p></div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel feature-card">
+            <div class="feature-icon"><span class="banner-badge" style="width:58px;height:58px">A</span></div>
+            <div><h3 class="h5">Rivals that play to win</h3><p class="muted mb-0">Aggressor, Defender and Opportunist NPCs weigh odds and spoils, and tell you why.</p></div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel feature-card">
+            <div class="feature-icon" style="background:#efe3d1;border:1px solid var(--line)">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#92400e" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3" /><path d="M5 11a7 7 0 0 0 14 0M12 18v4" /></svg>
+            </div>
+            <div><h3 class="h5">An AI chronicler</h3><p class="muted mb-0">An LLM narrates each roll in the voice you pick: sports broadcaster, war poet or dry historian.</p></div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel feature-card">
+            <div class="feature-icon" style="background:var(--you-soft);border:1px solid var(--you)">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#065f46" stroke-width="2" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" /></svg>
+            </div>
+            <div><h3 class="h5">Share it, watch it live</h3><p class="muted mb-0">Anyone with the link can spectate. Only the logged-in commander can play a turn.</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== LIVE NOW ===== -->
+<section class="mt-5">
+    <div class="section-head">
+        <h2 class="mb-0">Live now</h2>
+        <a asp-action="Live">See all live games &rarr;</a>
+    </div>
+    <partial name="_LiveList" model="Model.LiveGames" />
+</section>
