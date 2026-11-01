@@ -47,6 +47,9 @@ namespace GeoPolitics_Game.Models
         public List<int>? DefenderDice { get; set; }
         public int? AttackerLosses { get; set; }
         public int? DefenderLosses { get; set; }
+        public int? AttackerSoldiersAfter { get; set; }
+        public int? DefenderSoldiersAfter { get; set; }
+        public string? TargetPlayerId { get; set; }                // who was being attacked
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

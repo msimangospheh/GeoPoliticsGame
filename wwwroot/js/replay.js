@@ -102,7 +102,7 @@
         while (logList.children.length > 6) logList.lastElementChild.remove();
     }
 
-    function showStrip(title, aDice, dDice) {
+    function showStrip(title, aDice, dDice, quote) {
         strip.classList.remove('d-none');
         strip.replaceChildren();
         const head = document.createElement('div');
@@ -125,6 +125,12 @@
                 row.appendChild(pair);
             });
             strip.appendChild(row);
+        }
+        if (quote) {
+            const q = document.createElement('p');
+            q.className = 'chronicle mb-0 mt-2';
+            q.textContent = `\u201C${quote}\u201D`;
+            strip.appendChild(q);
         }
     }
 
@@ -175,8 +181,8 @@
                     setSoldiers(e.to, soldiersOf(e.to) - (e.dLoss || 0));
                     if (e.dLoss) floatText(e.to, `-${e.dLoss}`, true);
                     if (e.aLoss) floatText(e.from, `-${e.aLoss}`, true);
-                    showStrip(`Live · ${e.message}`, e.aDice, e.dDice);
-                    await wait(900);
+                    showStrip(`Live · ${e.message}`, e.aDice, e.dDice, e.commentary);
+                    await wait(e.commentary ? 1800 : 900);   // a little longer to read the commentary
                     break;
 
                 case 'Conquered':

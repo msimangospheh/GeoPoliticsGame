@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using GeoPolitics_Game.Services;
 using GeoPolitics_Game.Services.Npc;
+using GeoPolitics_Game.Services.Commentary;
 using MongoDB.Driver;
 
 MongoConventions.Register();   // must run BEFORE anything touches MongoDB
@@ -32,6 +33,12 @@ builder.Services.AddSingleton<IRandomSource, SecureRandomSource>();
 builder.Services.AddSingleton<IGameEngine, GameEngine>();
 builder.Services.AddScoped<INpcPlayer, NpcBrain>();   // NPCs that play to win
 builder.Services.AddScoped<IGameService, GameService>();
+// ---- AI Chronicler (any OpenAI-compatible API; Groq's free tier by default) ----
+builder.Services.Configure<LlmSettings>(builder.Configuration.GetSection("Llm"));
+builder.Services.AddHttpClient<ICommentaryService, LlmCommentaryService>(client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(20);
+});
 
 // ---- Login: ASP.NET Identity, users stored in MongoDB ----
 var mongoConnection = builder.Configuration["MongoDb:ConnectionString"]

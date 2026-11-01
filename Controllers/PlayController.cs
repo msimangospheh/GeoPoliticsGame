@@ -109,7 +109,12 @@ namespace GeoPolitics_Game.Controllers
                                                          or GameEventType.AttackFailed or GameEventType.Retreated
                                                          or GameEventType.GameWon);
                 if (headline != null)
-                    TempData[headline.Type == GameEventType.AttackFailed ? "Error" : "Success"] = headline.Message;
+                {
+                    // Add the Chronicler's line for the final roll, e.g. "India falls! ..."
+                    var lastRoll = events.LastOrDefault(e => e.Type == GameEventType.DiceRolled && !e.IsNpc);
+                    var quote = lastRoll?.Commentary is { Length: > 0 } c ? $"  \u201C{c}\u201D" : "";
+                    TempData[headline.Type == GameEventType.AttackFailed ? "Error" : "Success"] = headline.Message + quote;
+                }
 
                 bool npcMoved = events.Any(e => e.IsNpc);
                 return npcMoved
@@ -163,7 +168,8 @@ namespace GeoPolitics_Game.Controllers
                     aDice = e.AttackerDice,
                     dDice = e.DefenderDice,
                     aLoss = e.AttackerLosses,
-                    dLoss = e.DefenderLosses
+                    dLoss = e.DefenderLosses,
+                    commentary = e.Commentary
                 })
             };
             // The default encoder escapes <, > and & so the JSON is safe to put inside a <script> tag

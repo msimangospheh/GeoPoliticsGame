@@ -188,6 +188,9 @@ namespace GeoPolitics_Game.Services.Engine
             e.DefenderDice = defenderDice;
             e.AttackerLosses = attackerLosses;
             e.DefenderLosses = defenderLosses;
+            e.AttackerSoldiersAfter = attacker.Soldiers;
+            e.DefenderSoldiersAfter = defender.Soldiers;
+            e.TargetPlayerId = battle.DefenderPlayerId;
 
             if (defender.Soldiers == 0)
             {

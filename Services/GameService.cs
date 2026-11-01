@@ -1,5 +1,6 @@
 ﻿using GeoPolitics_Game.Data.Repositories;
 using GeoPolitics_Game.Models;
+using GeoPolitics_Game.Services.Commentary;
 using GeoPolitics_Game.Services.Engine;
 using GeoPolitics_Game.Services.Npc;
 
@@ -26,15 +27,17 @@ namespace GeoPolitics_Game.Services
         private readonly ICountryRepository _countries;
         private readonly IGameEngine _engine;
         private readonly INpcPlayer _npc;
+        private readonly ICommentaryService _commentary;
 
         public GameService(IGameRepository games, IGameEventRepository events, ICountryRepository countries,
-                           IGameEngine engine, INpcPlayer npc)
+                           IGameEngine engine, INpcPlayer npc, ICommentaryService commentary)
         {
             _games = games;
             _events = events;
             _countries = countries;
             _engine = engine;
             _npc = npc;
+            _commentary = commentary;
         }
 
         // Step 1 -> 2: pick a homeland, the server draws 9 random rivals
@@ -98,7 +101,7 @@ namespace GeoPolitics_Game.Services
             await _games.DeleteAsync(game.Id);
         }
 
-        // Lets the NPCs play, remembers how the board looked first (for the replay), then saves everything
+        // Lets the NPCs play, adds AI commentary, remembers the board for the replay, then saves everything
         private async Task RunNpcTurnsAndSaveAsync(Game game, List<GameEvent> events)
         {
             var before = game.Territories
@@ -109,11 +112,11 @@ namespace GeoPolitics_Game.Services
             events.AddRange(PlayNpcTurns(game));
             bool npcMoved = events.Skip(firstNpcEvent).Any(e => e.IsNpc);
 
+            await AddCommentaryAsync(game, events);
             await _events.AddManyAsync(events);   // gives every event its Seq number
 
             if (npcMoved)
             {
-                // Replay from the first event that isn't the human's (e.g. "Round 2: The Aggressor receives 4")
                 int start = events.FindIndex(e => e.ActorPlayerId != game.HumanPlayerId);
                 game.Replay = new ReplayInfo
                 {
@@ -128,6 +131,68 @@ namespace GeoPolitics_Game.Services
             }
 
             await _games.ReplaceAsync(game);
+        }
+
+        // Groups dice rolls into battles and asks the Chronicler about each battle (all at once, in parallel)
+        private async Task AddCommentaryAsync(Game game, List<GameEvent> events)
+        {
+            var battles = new List<List<(GameEvent Roll, string Outcome)>>();
+            List<(GameEvent Roll, string Outcome)>? current = null;
+
+            for (int i = 0; i < events.Count; i++)
+            {
+                var e = events[i];
+                if (e.Type == GameEventType.AttackStarted) { current = null; continue; }
+                if (e.Type != GameEventType.DiceRolled) continue;
+
+                if (current == null) { current = new(); battles.Add(current); }
+
+                GameEventType? next = i + 1 < events.Count ? events[i + 1].Type : null;
+                string outcome = next switch
+                {
+                    GameEventType.Conquered => "conquered",
+                    GameEventType.AttackFailed => "failed",
+                    GameEventType.Retreated => "retreat",
+                    _ => "continues"
+                };
+                current.Add((e, outcome));
+                if (outcome != "continues") current = null;
+            }
+
+            if (battles.Count == 0) return;
+
+            await Task.WhenAll(battles.Select(async battle =>
+            {
+                var facts = battle.Select(b => ToFacts(game, b.Roll, b.Outcome)).ToList();
+                var lines = await _commentary.CommentateAsync(game.Settings.CommentatorVoice, facts);
+                for (int i = 0; i < battle.Count && i < lines.Count; i++)
+                    battle[i].Roll.Commentary = lines[i];
+            }));
+
+            // The battle screen reads the commentary from the saved roll
+            var lastHumanRoll = events.LastOrDefault(e => e.Type == GameEventType.DiceRolled && !e.IsNpc);
+            if (game.ActiveBattle?.Rolls.LastOrDefault() is { } roll && lastHumanRoll != null)
+                roll.Commentary = lastHumanRoll.Commentary;
+        }
+
+        private static RollFacts ToFacts(Game game, GameEvent e, string outcome)
+        {
+            string Country(string? code) =>
+                game.Territories.FirstOrDefault(t => t.CountryCode == code)?.CountryName ?? code ?? "?";
+
+            string Army(string? playerId)
+            {
+                var p = game.Players.FirstOrDefault(x => x.Id == playerId);
+                return p == null ? "unknown" : p.IsHuman ? "our commander" : p.Name;
+            }
+
+            return new RollFacts(
+                Country(e.FromCode), Country(e.ToCode),
+                Army(e.ActorPlayerId), Army(e.TargetPlayerId),
+                e.AttackerDice ?? new List<int>(), e.DefenderDice ?? new List<int>(),
+                e.AttackerLosses ?? 0, e.DefenderLosses ?? 0,
+                e.AttackerSoldiersAfter ?? 0, e.DefenderSoldiersAfter ?? 0,
+                outcome);
         }
 
         // NPCs take their turns until it's the human's turn again (or the game ends)
