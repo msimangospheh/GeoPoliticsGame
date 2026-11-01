@@ -50,6 +50,9 @@ namespace GeoPolitics_Game.Controllers
                 replayJson = BuildReplayJson(game, npcMoves);
             }
 
+            // Finished games show the victory / defeat screen (after any replay has played)
+            if (game.IsOver && replayJson == null)
+                return RedirectToAction(nameof(Result), new { id });
             var model = new BoardViewModel(game, isOwner, from, to, events, replayJson);
             return View(game.ActiveBattle != null && replayJson == null ? "Battle" : "Board", model);
         }
@@ -71,6 +74,20 @@ namespace GeoPolitics_Game.Controllers
                 .ToList();
 
             return View(new LedgerViewModel { Game = game, Entries = entries, Show = show });
+        }
+
+        // GET /Play/{id}/Result   - victory or defeat screen (public, like the board)
+        [AllowAnonymous]
+        [HttpGet("/Play/{id}/Result")]
+        public async Task<IActionResult> Result(string id)
+        {
+            var game = await _games.GetByIdAsync(id);
+            if (game == null || game.Status == GameStatus.Setup) return NotFound();
+            if (!User.IsOwnerOf(game) && !game.Settings.AllowSpectators) return NotFound();
+            if (!game.IsOver) return RedirectToAction(nameof(Index), new { id });
+
+            var events = await _events.GetForGameAsync(id);
+            return View(new ResultViewModel(game, events));
         }
 
         [HttpPost("/Play/{id}/Reinforce")]

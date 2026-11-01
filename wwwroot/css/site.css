@@ -1645,3 +1645,245 @@ a.new-campaign-card {
         display: none;
     }
 }
+
+/* ===== Phase 8: 3D dice ===== */
+.duel {
+    grid-template-columns: 54px 1fr 54px;
+    animation: none;
+}
+
+.duel-text {
+    animation: fade-in .3s ease both;
+}
+
+.die3d {
+    width: 52px;
+    height: 52px;
+    padding: 7px;
+    gap: 2px;
+    border-radius: 11px;
+    background: #fff;
+    border: 2px solid var(--ink);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    box-shadow: 0 4px 10px rgba(58,42,30,.15);
+    animation: tumble .8s cubic-bezier(.2,.8,.3,1.2) var(--delay) both;
+}
+
+    .die3d i {
+        display: block;
+    }
+
+        .die3d i.pip {
+            width: 9px;
+            height: 9px;
+            place-self: center;
+            border-radius: 50%;
+            background: var(--ink);
+        }
+
+    .die3d.win {
+        border-color: var(--you);
+        animation: tumble .8s cubic-bezier(.2,.8,.3,1.2) var(--delay) both, impact .5s ease calc(var(--delay) + .8s) both;
+    }
+
+    .die3d.lose {
+        border: 2px dashed var(--target);
+        background: #f3e6e2;
+        animation: tumble .8s cubic-bezier(.2,.8,.3,1.2) var(--delay) both, shake .4s ease calc(var(--delay) + .8s) both;
+    }
+
+        .die3d.lose i.pip {
+            background: var(--ink-soft);
+        }
+
+@keyframes tumble {
+    0% {
+        transform: perspective(300px) translateY(-40px) rotateX(540deg) rotateY(360deg) scale(.6);
+        opacity: 0;
+    }
+
+    60% {
+        opacity: 1;
+    }
+
+    80% {
+        transform: perspective(300px) translateY(4px) rotateX(-10deg) rotateY(8deg) scale(1.05);
+    }
+
+    100% {
+        transform: none;
+    }
+}
+
+@keyframes impact {
+    from {
+        box-shadow: 0 0 0 0 rgba(16,185,129,.8);
+    }
+
+    to {
+        box-shadow: 0 0 18px 4px rgba(16,185,129,.45);
+    }
+}
+
+@keyframes shake {
+    25% {
+        transform: translateX(-4px) rotate(-5deg);
+    }
+
+    75% {
+        transform: translateX(4px) rotate(5deg);
+    }
+}
+
+/* Fallen soldiers burst off the board */
+.shield {
+    position: relative;
+}
+
+    .shield.lost::after {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: inherit;
+        background: var(--target);
+        animation: burst .8s ease-out var(--burst, 0ms) both;
+    }
+
+@keyframes burst {
+    0% {
+        transform: none;
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-26px) rotate(35deg) scale(.3);
+        opacity: 0;
+    }
+}
+
+/* Commentary types itself in */
+.typewriter {
+    animation: fade-in .6s ease both;
+}
+
+/* ===== Phase 8: victory and defeat ===== */
+.crown {
+    display: inline-block;
+    margin-bottom: .5rem;
+    animation: crown-drop .8s cubic-bezier(.3,1.4,.5,1) both;
+}
+
+@keyframes crown-drop {
+    from {
+        transform: translateY(-40px) scale(.6);
+        opacity: 0;
+    }
+}
+
+.result-title {
+    font-size: clamp(2.4rem, 6vw, 4.6rem);
+    font-weight: 900;
+    line-height: 1.05;
+    animation: rise .6s ease .2s both;
+}
+
+.result-page.won .result-title {
+    background: linear-gradient(90deg, #6b4a12, var(--gold), #8a6414);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.result-page.lost .result-title {
+    color: var(--target-ink);
+}
+
+.result-board {
+    aspect-ratio: 5 / 3;
+}
+
+.sunburst {
+    position: absolute;
+    inset: -50%;
+    z-index: 0;
+    pointer-events: none;
+    background: repeating-conic-gradient(rgba(16,185,129,.10) 0deg 10deg, transparent 10deg 20deg);
+    animation: spin 40s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.board-card.demo .check {
+    margin-left: .4rem;
+    color: var(--you-ink);
+    font-weight: 900;
+}
+
+.board-card.demo.fallen {
+    animation: fade-in .4s ease both, dim 1s ease forwards;
+}
+
+@keyframes dim {
+    to {
+        opacity: .4;
+        filter: grayscale(1);
+    }
+}
+
+.held-pill {
+    position: absolute;
+    left: 1rem;
+    bottom: 1rem;
+    z-index: 3;
+    padding: .3rem .8rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: .85rem;
+}
+
+.stat-card.panel .value {
+    color: var(--ink);
+}
+
+.timeline {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 120px;
+}
+
+.tl-bar {
+    flex: 1;
+    min-height: 4px;
+    border-radius: 3px 3px 0 0;
+    background: var(--gold);
+    transform-origin: bottom;
+    animation: grow .6s ease both;
+}
+
+    .tl-bar.last {
+        background: var(--you);
+    }
+
+.result-page.lost .tl-bar.last {
+    background: var(--target);
+}
+
+@keyframes grow {
+    from {
+        transform: scaleY(0);
+    }
+}
+
+/* ===== Phase 8: polish ===== */
+.island {
+    width: 24%;
+    height: 26%;
+}
+/* bottom-row islands no longer overlap */

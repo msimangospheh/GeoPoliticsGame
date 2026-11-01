@@ -1,0 +1,137 @@
+﻿@model ResultViewModel
+@{
+    var g = Model.Game;
+    bool won = Model.Won;
+    var winner = g.Players.FirstOrDefault(p => p.Id == g.WinnerPlayerId);
+    int held = g.TerritoryCount(g.HumanPlayerId);
+    var cards = g.Territories.OrderBy(t => t.Slot).ToList();
+    ViewData["Title"] = won ? "The World Is Yours" : "Your Banner Falls";
+}
+
+<div class="result-page @(won ? "won" : "lost")">
+    <div class="text-center mb-4">
+        <div class="crown" aria-hidden="true">
+            @if (won)
+            {
+                <svg width="76" height="56" viewBox="0 0 76 56"><path d="M4 18 L20 34 L38 6 L56 34 L72 18 L66 48 H10 Z" fill="#8a6414" /><rect x="10" y="50" width="56" height="5" rx="2" fill="#6b4a12" /></svg>
+            }
+            else
+            {
+                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#be123c" stroke-width="2" stroke-linecap="round"><path d="M4 22V4M4 4h12l-2 4 2 4H4" /></svg>
+            }
+        </div>
+        <p class="eyebrow" style="color:@(won ? "var(--you-ink)" : "var(--target-ink)")">
+            Game #@g.ShortCode · @g.Round rounds · @(won ? "All 10 nations" : "Campaign over")
+        </p>
+        <h1 class="result-title">@(won ? "The World Is Yours" : "Your Banner Falls")</h1>
+        <p class="fs-5 muted">
+            @if (won)
+            {
+                @($"{g.OwnerName}, from {Model.Homeland}, raised one banner over every capital.")
+            }
+            else
+            {
+                @($"{g.OwnerName}'s campaign from {Model.Homeland} ends in round {g.Round}. {winner?.Name ?? "A rival"} now leads the world.")
+            }
+        </p>
+    </div>
+
+    <div class="row g-4">
+        <!-- The final map -->
+        <div class="col-lg-8">
+            <div class="board result-board">
+                @if (won)
+                {
+                    <div class="sunburst" aria-hidden="true"></div>
+                }
+                @for (int i = 0; i < cards.Count; i++)
+                {
+                    var t = cards[i];
+                    var pos = BoardViewModel.SlotPosition(t.Slot);
+                    bool mine = t.OwnerPlayerId == g.HumanPlayerId;
+                    <div class="country-card board-card demo @(mine ? "you" : "npc") @(won ? "" : "fallen")"
+                         style="left:@(pos.X)%;top:@(pos.Y)%;animation-delay:@(i * 90)ms, @(400 + i * 250)ms">
+                        <span class="card-name">@t.CountryName</span>
+                        @if (mine)
+                        {
+                            <span class="check">&#10003;</span>
+                        }
+                    </div>
+                }
+                <span class="held-pill @(won ? "badge-you" : "badge-target")">@held / 10 nations held</span>
+            </div>
+        </div>
+
+        <!-- Stats, chart, key moments -->
+        <div class="col-lg-4 d-flex flex-column gap-3">
+            <div class="row g-3">
+                <div class="col-6"><div class="panel stat-card"><div class="value">@g.Round</div><div class="label">Rounds</div></div></div>
+                <div class="col-6"><div class="panel stat-card"><div class="value">@Model.BattlesWon</div><div class="label">Battles won</div></div></div>
+                <div class="col-6"><div class="panel stat-card"><div class="value">@Model.DiceRolled</div><div class="label">Dice rolled</div></div></div>
+                <div class="col-6"><div class="panel stat-card"><div class="value">@Model.RivalsToppled</div><div class="label">Rivals toppled</div></div></div>
+            </div>
+
+            <div class="panel">
+                <p class="eyebrow">Territory over time</p>
+                @if (Model.Timeline.Count == 0)
+                {
+                    <p class="muted small mb-0">No rounds recorded.</p>
+                }
+                else
+                {
+                    <div class="timeline" role="img" aria-label="Your number of countries at the end of each round">
+                        @for (int i = 0; i < Model.Timeline.Count; i++)
+                        {
+                            var point = Model.Timeline[i];
+                            <span class="tl-bar @(i == Model.Timeline.Count - 1 ? "last" : "")"
+                                  style="height:@(Math.Max(4, point.Nations * 10))%;animation-delay:@(i * 60)ms"
+                                  title="Round @point.Round: @point.Nations nations"></span>
+                        }
+                    </div>
+                    <div class="d-flex justify-content-between small muted mt-1">
+                        <span>Round @Model.Timeline.First().Round</span><span>Round @Model.Timeline.Last().Round</span>
+                    </div>
+                }
+            </div>
+
+            <div class="panel">
+                <p class="eyebrow">Key moments</p>
+                @if (Model.KeyMoments.Count == 0)
+                {
+                    <p class="muted small mb-0">No key moments recorded.</p>
+                }
+                @foreach (var e in Model.KeyMoments)
+                {
+                    <p class="small mb-2"><strong style="color:var(--npc-ink)">R@(e.Round)</strong> · @e.Message</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2 flex-wrap mt-4">
+        <a class="btn btn-you px-4" href="/Play/@g.Id/Ledger">Read the war ledger</a>
+        <button type="button" class="btn btn-ghost px-4" data-copy-link>Share link</button>
+        <a class="btn btn-attack px-4" asp-controller="Games" asp-action="New">New campaign</a>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/board.js" asp-append-version="true"></script>
+    @if (won)
+    {
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.browser.min.js"></script>
+        <script>
+            // Two confetti cannons for 2.5 seconds (skipped automatically if "reduce motion" is on)
+            (function () {
+                if (typeof confetti !== 'function') return;
+                const colors = ['#10b981', '#f59e0b', '#f43f5e', '#c9a24a', '#3a2a1e'];
+                const end = Date.now() + 2500;
+                (function frame() {
+                    confetti({ particleCount: 4, angle: 60, spread: 60, origin: { x: 0 }, colors, disableForReducedMotion: true });
+                    confetti({ particleCount: 4, angle: 120, spread: 60, origin: { x: 1 }, colors, disableForReducedMotion: true });
+                    if (Date.now() < end) requestAnimationFrame(frame);
+                })();
+            })();
+        </script>
+    }
+}

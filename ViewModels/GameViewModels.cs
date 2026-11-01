@@ -77,6 +77,39 @@ namespace GeoPolitics_Game.ViewModels
         }
     }
 
+    // The end-of-game screen ("The World Is Yours" / "Your Banner Falls")
+    public class ResultViewModel
+    {
+        public Game Game { get; }
+        public bool Won => Game.Status == GameStatus.Won;
+        public string Homeland { get; }
+        public int BattlesWon { get; }
+        public int DiceRolled { get; }
+        public int RivalsToppled { get; }
+        public List<GameEvent> KeyMoments { get; }
+        public List<(int Round, int Nations)> Timeline { get; }
+
+        public ResultViewModel(Game game, List<GameEvent> events)
+        {
+            Game = game;
+            Homeland = game.Territories.FirstOrDefault(t => t.CountryCode == game.StartCountryCode)?.CountryName
+                       ?? game.StartCountryCode;
+
+            BattlesWon = events.Count(e => e.Type == GameEventType.Conquered && e.ActorPlayerId == game.HumanPlayerId);
+            DiceRolled = events.Where(e => e.Type == GameEventType.DiceRolled)
+                               .Sum(e => (e.AttackerDice?.Count ?? 0) + (e.DefenderDice?.Count ?? 0));
+            RivalsToppled = game.Players.Count(p => !p.IsHuman && p.IsEliminated);
+
+            var moments = events.Where(e => e.IsKeyMoment).ToList();
+            KeyMoments = moments.Count <= 6 ? moments : moments.Take(3).Concat(moments.TakeLast(3)).ToList();
+
+            // How many countries the human held at the end of each round
+            Timeline = game.History.OrderBy(s => s.Round)
+                                   .Select(s => (s.Round, s.TerritoriesByPlayer.GetValueOrDefault(game.HumanPlayerId)))
+                                   .ToList();
+        }
+    }
+
     // What the Launch form sends
     public class LaunchForm
     {

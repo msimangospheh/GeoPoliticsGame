@@ -50,6 +50,11 @@
         {
             <a class="btn btn-you flex-grow-1" href="/Play/@g.Id">Resume campaign</a>
         }
+        else
+        {
+            <a class="btn btn-ghost flex-grow-1" href="/Play/@g.Id/Result">View result</a>
+        }
+        }
         <form asp-action="Delete" asp-route-id="@g.Id" method="post" class="m-0"
               onsubmit="return confirm('Delete campaign #@g.ShortCode? This cannot be undone.');">
             <button type="submit" class="btn btn-ghost" title="Delete">&#x1F5D1;</button>
