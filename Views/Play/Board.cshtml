@@ -4,6 +4,10 @@
     ViewData["Title"] = $"Game #{g.ShortCode}";
 }
 
+@{
+    var ownerShort = g.OwnerName.Replace("Commander ", "");
+}
+<div hidden data-live-game="@g.Id" data-view="board" data-spectator="@(Model.IsOwner ? "false" : "true")" data-owner="@ownerShort"></div>
 <div class="board-topbar">
     <div class="d-flex align-items-center gap-3">
         @if (Model.IsOwner)
@@ -12,13 +16,20 @@
         }
         <div>
             <div class="display h5 mb-0">Game #@g.ShortCode</div>
-            <div class="small muted">Round @g.Round · @g.OwnerName</div>
+            <div class="small muted" data-live-region="round">Round @g.Round · @g.OwnerName</div>
         </div>
     </div>
     <div class="legend">
         <span class="legend-you">You</span><span>A Aggressor</span><span>D Defender</span><span>O Opportunist</span>
     </div>
-    <button type="button" class="btn btn-ghost btn-sm" data-copy-link>Share link</button>
+    <div class="d-flex align-items-center gap-2">
+        @if (!Model.IsOwner)
+        {
+            <span class="live-badge">LIVE</span>
+        }
+        <span class="watch-pill" data-watchers>1 watching</span>
+        <button type="button" class="btn btn-ghost btn-sm" data-copy-link>Share link</button>
+    </div>
 </div>
 
 <partial name="_Messages" />
@@ -56,7 +67,7 @@ else if (g.Status == GameStatus.Lost)
 <div class="row g-3">
     <!-- THE BOARD -->
     <div class="col-lg-8">
-        <div class="board">
+        <div class="board" data-live-region="board">
             <svg class="board-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
                 @if (Model.CanPlay && Model.From != null && Model.To != null)
                 {
@@ -160,12 +171,25 @@ else if (g.Status == GameStatus.Lost)
         else if (!Model.IsOwner)
         {
             <div class="panel">
-                <p class="eyebrow">Watching</p>
-                <p>You're watching <strong>@g.OwnerName</strong>. Only they can play turns in this game.</p>
+                <p class="eyebrow">Watching live</p>
+                <p>You're watching <strong>@g.OwnerName</strong>. Only they can play turns in this game. The board updates by itself.</p>
+                <div class="d-flex gap-2 mb-3">
+                    <button type="button" class="btn btn-you btn-sm flex-grow-1" data-cheer="go">Go @ownerShort!</button>
+                    <button type="button" class="btn btn-ghost btn-sm flex-grow-1" data-cheer="retreat">Retreat!</button>
+                </div>
                 @if (User.Identity?.IsAuthenticated != true)
                 {
                     <a class="btn btn-attack w-100" asp-controller="Account" asp-action="Register">Start your own campaign</a>
                 }
+            </div>
+            <div class="panel">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <p class="eyebrow mb-0">Live feed</p>
+                    <span class="small" style="color:var(--target-ink)">&#9679; auto-updating</span>
+                </div>
+                <div class="d-flex flex-column gap-2 live-feed" data-live-feed>
+                    <p class="muted small mb-0" data-feed-empty>Waiting for the next move&hellip;</p>
+                </div>
             </div>
         }
 
@@ -178,7 +202,7 @@ else if (g.Status == GameStatus.Lost)
             {
                 <p class="muted small mb-0">No NPC moves yet.</p>
             }
-            <div class="d-flex flex-column gap-2" id="npc-log-list">
+            <div class="d-flex flex-column gap-2" id="npc-log-list" data-live-region="npclog">
                 @foreach (var e in Model.NpcLog)
                 {
                     var actor = g.Players.FirstOrDefault(p => p.Id == e.ActorPlayerId);
@@ -197,7 +221,7 @@ else if (g.Status == GameStatus.Lost)
 </div>
 
 <!-- STANDINGS -->
-<div class="row g-3 mt-1">
+<div class="row g-3 mt-1" data-live-region="standings">
     @foreach (var s in Model.Standings())
     {
         <div class="col-6 col-md-3">
@@ -217,6 +241,8 @@ else if (g.Status == GameStatus.Lost)
 
 @section Scripts {
     <script src="~/js/board.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+    <script src="~/js/live.js" asp-append-version="true"></script>
     @if (Model.IsReplay)
     {
         <script src="~/js/replay.js" asp-append-version="true"></script>

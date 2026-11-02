@@ -1,0 +1,20 @@
+@model (string CountryCode, bool Lost, int BurstMs)
+@{
+    // A stick soldier holding his country's flag (flag images from flagcdn.com)
+    var flag = $"https://flagcdn.com/w40/{Model.CountryCode.ToLowerInvariant()}.png";
+}
+<svg class="soldier @(Model.Lost ? "lost" : "")" viewBox="0 0 26 42"
+     style="@(Model.Lost ? $"--burst:{Model.BurstMs}ms" : "")"
+     role="img" aria-label="@(Model.Lost ? "Fallen soldier" : "Soldier")">
+    <!-- head and helmet -->
+    <circle class="head" cx="9" cy="11" r="4.5" />
+    <path class="helmet" d="M3.8 10.2 a5.2 5.2 0 0 1 10.4 0 z" />
+    <!-- body, legs and arms (one arm raised to hold the flag pole) -->
+    <path class="body" d="M9 15.5 V27 M9 27 L4 38 M9 27 L14 38 M9 19 L4 24 M9 19 L18 14" />
+    @if (!Model.Lost)
+    {
+        <!-- flag pole and flag -->
+        <line class="pole" x1="18" y1="2" x2="18" y2="30" />
+        <image href="@flag" x="18.5" y="2.5" width="8" height="5.5" preserveAspectRatio="none" />
+    }
+</svg>

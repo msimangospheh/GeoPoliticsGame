@@ -1,0 +1,421 @@
+/* =====================================================================
+   Phase 9.5 visual refresh: battlefield theme
+   Loaded AFTER site.css, so everything here overrides the old taupe look.
+   - Battlefield photo behind every page (world map on the homepage)
+   - Dark, blurred "glass" cards so text stays readable
+   - Colours from the photo: olive (you), khaki (rivals), terracotta (attack)
+   - Black Ops One war font for headings and numbers
+   - Real 3D dice cubes and stick soldiers with flags
+   ===================================================================== */
+
+/* ---------- 1. Colour tokens (site.css uses these everywhere) ---------- */
+:root {
+    --bg: #1d150c;
+    --bg-deep: #120c06;
+    --card: rgba(18, 13, 8, .55);       /* glass card */
+    --field: rgba(255, 255, 255, .08);  /* input boxes */
+    --line: rgba(201, 162, 74, .45);    /* gold-ish borders */
+    --ink: #f4ece1;                     /* main text (light) */
+    --ink-soft: #e7d3ad;
+    --gold: #c9a24a;
+    --you: #8a9a4b;        /* olive, from the camo uniforms */
+    --you-ink: #d4e09a;
+    --you-soft: rgba(52, 60, 28, .6);
+    --npc: #c8a96a;        /* khaki, from the dust */
+    --npc-ink: #e8cf94;
+    --target: #b5543a;     /* terracotta, from the red rocks */
+    --target-ink: #f0b39a;
+    --glass-blur: blur(12px);
+    --war-font: "Black Ops One", Inter, system-ui, sans-serif;
+}
+
+/* ---------- 2. Page backgrounds ---------- */
+body {
+    background: var(--bg-deep);
+    color: var(--ink);
+}
+
+    /* Battlefield photo, fixed so it stays put while the page scrolls */
+    body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+        background: linear-gradient(180deg, rgba(22,15,8,.25), rgba(22,15,8,.6)), url("../images/battlefield-bg.jpg") center / cover no-repeat;
+        background-image: linear-gradient(180deg, rgba(22,15,8,.25), rgba(22,15,8,.6)), image-set(url("../images/battlefield-bg.webp") type("image/webp"), url("../images/battlefield-bg.jpg") type("image/jpeg"));
+    }
+
+    /* Homepage: hide the photo, show the world map layer instead */
+    body.home::before {
+        display: none;
+    }
+
+.map-layer {
+    position: fixed;
+    left: -5%;
+    top: 0;
+    width: 110%;
+    height: 150vh;   /* taller than the screen so it has room to drift */
+    z-index: -2;
+    background: linear-gradient(180deg, rgba(22,15,8,.15), rgba(22,15,8,.55)), url("../images/world-map.jpg") center top / cover no-repeat;
+    background-image: linear-gradient(180deg, rgba(22,15,8,.15), rgba(22,15,8,.55)), image-set(url("../images/world-map.webp") type("image/webp"), url("../images/world-map.jpg") type("image/jpeg"));
+    will-change: transform;
+}
+
+/* ---------- 3. Glass cards: every card that holds text blurs the picture ---------- */
+.panel, .board, .board-card, .side-panel, .log-card, .legend, .turn-panel,
+.country-card, .country-row, .game-card, .rival-card, .stat-card, .step-card,
+.feature-card, .live-row, .ledger-card, .muster-dialog, .muster-row, .auth-card,
+.radio-card, .homeland-card, .new-campaign-card, .npc-banner, .feed-item,
+.battle-log-entry, .result-board, .hero > div:first-child {
+    background: var(--card);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    border-color: var(--line);
+    color: var(--ink);
+}
+
+/* Homepage hero text sits on a glass card too */
+.hero > div:first-child {
+    padding: 2rem;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+}
+
+.board {
+    background: rgba(18, 13, 8, .38);
+}
+
+    .board::before { /* faint grid lines on the board */
+        background-image: linear-gradient(rgba(201,162,74,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(201,162,74,.12) 1px, transparent 1px);
+    }
+
+.island {
+    background: rgba(255, 255, 255, .05);
+    border-color: rgba(201, 162, 74, .25);
+}
+
+.log-card, .muster-row, .battle-log-entry {
+    background: rgba(255, 255, 255, .06);
+}
+
+.battle-stage {
+    background: rgba(18, 13, 8, .35);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+}
+
+.turn-panel {
+    background: var(--you-soft);
+    border-color: var(--you);
+}
+
+.modal-backdrop-custom {
+    background: rgba(10, 7, 4, .6);
+}
+
+/* ---------- 4. Header and footer ---------- */
+.site-header {
+    background: rgba(20, 14, 8, .75);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border-bottom-color: var(--line);
+}
+
+.brand, .brand:hover {
+    color: var(--ink);
+}
+
+.brand-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 11px;
+    object-fit: cover;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, .45);
+}
+
+.main-nav a {
+    color: var(--ink-soft);
+}
+
+    .main-nav a:hover {
+        color: #fff;
+    }
+
+.site-footer {
+    background: rgba(20, 14, 8, .75);
+    color: var(--ink-soft);
+}
+
+a {
+    color: var(--npc-ink);
+}
+
+    a:hover {
+        color: #fff;
+    }
+
+/* ---------- 5. War font ---------- */
+h1, h2, h3, .display, .brand-name, .stat-card .value, .country-card .soldiers,
+.board-card .soldiers, .code-chip, .soldier-value, .homeland-value, .rival-value,
+.profile-badge, .place-ring, .step-value, .side-panel .big, .die, .banner-badge,
+.step-card .numeral, .result-title, .btn-attack {
+    font-family: var(--war-font);
+    font-weight: 400;
+    letter-spacing: .04em;
+}
+
+h1, h2, h3, .display {
+    color: var(--ink);
+}
+
+.hero h1 .gold {
+    background: linear-gradient(90deg, #e0896a, #e8cf94);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.hero-tag {
+    background: rgba(18, 13, 8, .55);
+}
+
+/* ---------- 6. Buttons, badges, forms ---------- */
+.btn-attack {
+    background: var(--target);
+    box-shadow: 0 8px 24px rgba(181, 84, 58, .45);
+}
+
+    .btn-attack:hover {
+        background: #9c4430;
+    }
+
+.btn-you, .avatar, .legend .active, .placed-badge {
+    background: var(--you);
+    color: #1f2410;
+}
+
+    .btn-you:hover {
+        background: #74833c;
+        color: #1f2410;
+    }
+
+.btn-ghost {
+    color: var(--ink);
+    background: rgba(255, 255, 255, .05);
+}
+
+    .btn-ghost:hover {
+        background: rgba(255, 255, 255, .12);
+        color: #fff;
+    }
+
+.badge-you { background: var(--you-soft); color: var(--you-ink); }
+.badge-npc { background: rgba(200, 169, 106, .2); color: var(--npc-ink); }
+.badge-target { background: rgba(181, 84, 58, .25); color: var(--target-ink); }
+
+.user-chip {
+    background: rgba(244, 236, 225, .95);
+    color: #3a2a1e;
+}
+
+.form-control, .form-select {
+    color: var(--ink);
+}
+
+    .form-control::placeholder {
+        color: rgba(231, 211, 173, .6);
+    }
+
+    .form-control:focus, .form-select:focus {
+        background: rgba(255, 255, 255, .14);
+        color: #fff;
+    }
+
+.form-select option {
+    background: #2b1f15;
+    color: var(--ink);
+}
+
+.table {
+    --bs-table-color: var(--ink);
+    --bs-table-bg: transparent;
+    --bs-table-border-color: var(--line);
+}
+
+.text-muted, .muted {
+    color: var(--ink-soft) !important;
+}
+
+/* Old green / pink glows switched to olive / terracotta */
+.country-card.you, .side-panel.you {
+    box-shadow: 0 0 18px rgba(138, 154, 75, .4);
+}
+
+.country-card.target, .board-card.target {
+    box-shadow: 0 0 24px rgba(181, 84, 58, .55);
+}
+
+@keyframes target-pulse {
+    50% { box-shadow: 0 0 34px rgba(181, 84, 58, .7); }
+}
+
+/* ---------- 7. 3D dice that visibly spin before they land ---------- */
+.dice-cube-wrap {
+    width: 52px;
+    height: 52px;
+    perspective: 600px;
+}
+
+.dice-cube {
+    position: relative;
+    width: 52px;
+    height: 52px;
+    transform-style: preserve-3d;
+    transform: rotateX(var(--rx)) rotateY(var(--ry));
+    animation: cube-roll 1.4s cubic-bezier(.2, .75, .25, 1) var(--delay, 0ms) both;
+}
+
+    .dice-cube .face {
+        position: absolute;
+        inset: 0;
+        box-sizing: border-box;
+        padding: 7px;
+        border-radius: 10px;
+        background: #fffdf8;
+        border: 2px solid #3a2a1e;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+    }
+
+    .dice-cube .pip {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: #3a2a1e;
+        place-self: center;
+    }
+
+    /* Each face pushed out from the centre of the cube */
+    .dice-cube .f1 { transform: rotateY(0deg) translateZ(26px); }
+    .dice-cube .f6 { transform: rotateY(180deg) translateZ(26px); }
+    .dice-cube .f3 { transform: rotateY(90deg) translateZ(26px); }
+    .dice-cube .f4 { transform: rotateY(-90deg) translateZ(26px); }
+    .dice-cube .f2 { transform: rotateX(90deg) translateZ(26px); }
+    .dice-cube .f5 { transform: rotateX(-90deg) translateZ(26px); }
+
+/* Spin several times, drop in, then settle on the rolled face */
+@keyframes cube-roll {
+    0% {
+        transform: translateY(-46px) rotateX(calc(var(--rx) + 1080deg)) rotateY(calc(var(--ry) + 720deg));
+        opacity: 0;
+    }
+    10% { opacity: 1; }
+    80% {
+        transform: translateY(3px) rotateX(calc(var(--rx) - 8deg)) rotateY(calc(var(--ry) + 6deg));
+    }
+    100% {
+        transform: translateY(0) rotateX(var(--rx)) rotateY(var(--ry));
+    }
+}
+
+/* After landing: winner glows olive, loser flashes terracotta and shakes */
+.dice-cube-wrap.win .face {
+    animation: die-win .5s ease calc(var(--delay, 0ms) + 1.4s) both;
+}
+
+.dice-cube-wrap.lose .dice-cube {
+    animation: cube-roll 1.4s cubic-bezier(.2, .75, .25, 1) var(--delay, 0ms) both, die-shake .4s ease calc(var(--delay, 0ms) + 1.4s);
+}
+
+.dice-cube-wrap.lose .face {
+    animation: die-lose .5s ease calc(var(--delay, 0ms) + 1.4s) both;
+}
+
+@keyframes die-win {
+    to { border-color: var(--you); box-shadow: 0 0 16px rgba(138, 154, 75, .8); }
+}
+
+@keyframes die-lose {
+    to { border: 2px dashed var(--target); background: #f1ddd4; }
+}
+
+@keyframes die-shake {
+    25% { translate: -4px 0; }
+    75% { translate: 4px 0; }
+}
+
+/* ---------- 8. Stick soldiers holding their country's flag ---------- */
+.shields {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 2px;
+}
+
+.soldier {
+    width: 26px;
+    height: 42px;
+    overflow: visible;
+    animation: soldier-in .4s ease both;
+}
+
+    .soldier .body {
+        stroke: var(--ink);
+        stroke-width: 1.8;
+        fill: none;
+        stroke-linecap: round;
+    }
+
+    .soldier .head {
+        fill: #fffdf8;
+        stroke: var(--ink);
+        stroke-width: 1.6;
+    }
+
+    .soldier .helmet { fill: var(--npc); }
+    .side-panel.you .soldier .helmet { fill: var(--you); }
+
+    .soldier .pole {
+        stroke: #c9a24a;
+        stroke-width: 1.2;
+    }
+
+    /* A fallen soldier topples over and fades */
+    .soldier.lost {
+        animation: soldier-fall .7s ease-in var(--burst, 0ms) both;
+        transform-origin: 50% 100%;
+    }
+
+        .soldier.lost .body, .soldier.lost .head {
+            stroke: var(--target);
+        }
+
+@keyframes soldier-in {
+    from { opacity: 0; transform: translateY(6px); }
+}
+
+@keyframes soldier-fall {
+    0% { transform: none; opacity: 1; }
+    100% { transform: rotate(84deg) translateX(8px); opacity: .35; }
+}
+
+/* ---------- 9. Respect "reduce motion" ---------- */
+@media (prefers-reduced-motion: reduce) {
+    .dice-cube, .dice-cube-wrap .face, .soldier, .soldier.lost {
+        animation: none !important;
+    }
+
+    .soldier.lost {
+        opacity: .35;
+        transform: rotate(84deg);
+    }
+
+    .map-layer {
+        transform: none !important;
+    }
+}

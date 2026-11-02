@@ -7,6 +7,8 @@ using GeoPolitics_Game.Services.Engine;
 using GeoPolitics_Game.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using GeoPolitics_Game.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace GeoPolitics_Game.Controllers
 {
@@ -17,13 +19,16 @@ namespace GeoPolitics_Game.Controllers
         private readonly IGameEventRepository _events;
         private readonly IGameService _service;
         private readonly IGameEngine _engine;
+        private readonly IHubContext<GameHub> _hub;
 
-        public PlayController(IGameRepository games, IGameEventRepository events, IGameService service, IGameEngine engine)
+        public PlayController(IGameRepository games, IGameEventRepository events, IGameService service,
+                              IGameEngine engine, IHubContext<GameHub> hub)
         {
             _games = games;
             _events = events;
             _service = service;
             _engine = engine;
+            _hub = hub;
         }
 
         // GET /Play/{id}?from=ZA&to=IN&replay=true
@@ -120,6 +125,8 @@ namespace GeoPolitics_Game.Controllers
             try
             {
                 var events = await _service.PlayAsync(id, User.GetUserId(), action);
+                // Ping everyone watching this game so their screens refresh (live spectating)
+                await _hub.Clients.Group(GameHub.GroupName(id)).SendAsync("GameUpdated");
 
                 // Only headline the PLAYER's own result - the replay will show what the NPCs did
                 var headline = events.LastOrDefault(e => !e.IsNpc && e.Type is GameEventType.Conquered
@@ -148,6 +155,45 @@ namespace GeoPolitics_Game.Controllers
                 return NotFound();   // not your game: don't reveal anything
             }
         }
+
+        // GET /Play/{id}/Events?after=42   - the newest moves, for the spectators' live feed (JSON)
+        [AllowAnonymous]
+        [HttpGet("/Play/{id}/Events")]
+        public async Task<IActionResult> Events(string id, int after = 0)
+        {
+            var game = await _games.GetByIdAsync(id);
+            if (game == null || game.Status == GameStatus.Setup) return NotFound();
+            if (!User.IsOwnerOf(game) && !game.Settings.AllowSpectators) return NotFound();
+
+            var players = game.Players.ToDictionary(p => p.Id);
+            var feed = (await _events.GetForGameAsync(id, after))
+                .Where(e => e.Type is not (GameEventType.TurnStarted or GameEventType.GameStarted))
+                .TakeLast(20)
+                .Select(e => new
+                {
+                    seq = e.Seq,
+                    at = e.CreatedAt,
+                    label = FeedLabel(e),
+                    kind = e.Category,
+                    message = e.IsNpc && players.TryGetValue(e.ActorPlayerId, out var p) && !e.Message.StartsWith(p.Name)
+                        ? $"{p.Name}: {e.Message}"
+                        : e.Message,
+                    commentary = e.Commentary
+                });
+
+            return Json(feed);
+        }
+
+        private static string FeedLabel(GameEvent e) => e.Type switch
+        {
+            GameEventType.AttackStarted => "ATTACK",
+            GameEventType.DiceRolled => "BATTLE",
+            GameEventType.Conquered => "CONQUEST",
+            GameEventType.Reinforced => "REINFORCE",
+            GameEventType.Transferred => "TRANSFER",
+            GameEventType.TurnSkipped => e.IsNpc ? "NPC" : "END TURN",
+            _ => e.Type.ToString().ToUpperInvariant()
+        };
 
         // Puts the board back to how it looked before the NPCs moved (in memory only - nothing is saved)
         private static void RewindForReplay(Game game, ReplayInfo info)

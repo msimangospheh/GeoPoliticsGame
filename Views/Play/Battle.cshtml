@@ -18,8 +18,12 @@
 }
 
 <partial name="_Messages" />
+@{
+    var ownerShort = g.OwnerName.Replace("Commander ", "");
+}
+<div hidden data-live-game="@g.Id" data-view="battle" data-spectator="@(Model.IsOwner ? "false" : "true")" data-owner="@ownerShort"></div>
 
-<div class="row g-3">
+<div class="row g-3" data-live-region="battle">
     <div class="col-lg-8">
         <div class="panel battle-stage">
             <p class="eyebrow text-center" style="color:var(--target-ink)">Round @g.Round · Roll @battle.Rolls.Count</p>
@@ -139,7 +143,10 @@
     <!-- Battle log -->
     <div class="col-lg-4">
         <div class="panel h-100 d-flex flex-column">
-            <div class="d-flex justify-content-between mb-2"><strong>Game #@g.ShortCode</strong></div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <strong>Game #@g.ShortCode</strong>
+                <span class="watch-pill" data-watchers>1 watching</span>
+            </div>
             <p class="eyebrow">Battle log</p>
             @for (int i = 0; i < battle.Rolls.Count; i++)
             {
@@ -158,7 +165,7 @@
             </div>
         </div>
     </div>
-</div>
+</>
 
 <div class="panel d-flex justify-content-between align-items-center flex-wrap gap-3 mt-3">
     @if (Model.CanPlay && attOwner.IsHuman)
@@ -176,10 +183,16 @@
     }
     else
     {
-        <span>&#x1F512; Only <strong>@g.OwnerName</strong> can roll in this game. <a href="/Play/@g.Id">Refresh</a> to see the latest roll.</span>
+            <span><span class="live-badge me-2">LIVE</span>&#x1F512; Only <strong>@g.OwnerName</strong> can roll in this game. Each roll appears here as it happens.</span>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-you btn-sm" data-cheer="go">Go @ownerShort!</button>
+                <button type="button" class="btn btn-ghost btn-sm" data-cheer="retreat">Retreat!</button>
+            </div>
     }
 </div>
 
 @section Scripts {
     <script src="~/js/battle.js" asp-append-version="true"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+        <script src="~/js/live.js" asp-append-version="true"></script>
 }

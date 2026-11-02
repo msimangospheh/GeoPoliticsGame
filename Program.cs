@@ -10,6 +10,7 @@ using MongoDB.Bson;
 using GeoPolitics_Game.Services;
 using GeoPolitics_Game.Services.Npc;
 using GeoPolitics_Game.Services.Commentary;
+using GeoPolitics_Game.Hubs;
 using MongoDB.Driver;
 
 MongoConventions.Register();   // must run BEFORE anything touches MongoDB
@@ -19,6 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
 // MVC + an automatic anti-forgery check on EVERY form POST (stops cross-site request forgery)
 builder.Services.AddControllersWithViews(options =>
     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
+// Real-time updates for spectators
+builder.Services.AddSignalR();
 
 // ---- Database layer ----
 builder.Services.Configure<MongoSettings>(builder.Configuration.GetSection("MongoDb"));
@@ -126,5 +129,6 @@ app.UseAuthorization();    // are you allowed?
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapHub<GameHub>("/hubs/game");
 
 app.Run();

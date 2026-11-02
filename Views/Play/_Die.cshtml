@@ -1,7 +1,7 @@
-﻿@model (int Value, string Css, int Delay)
+@model (int Value, string Css, int Delay)
 @{
     // Which of the 9 grid cells hold a pip for each face
-    var pips = Model.Value switch
+    int[] PipsFor(int v) => v switch
     {
         1 => new[] { 4 },
         2 => new[] { 0, 8 },
@@ -10,10 +10,29 @@
         5 => new[] { 0, 2, 4, 6, 8 },
         _ => new[] { 0, 2, 3, 5, 6, 8 }
     };
-}
-<span class="die3d @Model.Css" style="--delay:@(Model.Delay)ms" role="img" aria-label="Die showing @Model.Value">
-    @for (int i = 0; i < 9; i++)
+
+    // How to turn the cube so the rolled number faces the player
+    var (rx, ry) = Model.Value switch
     {
-        <i class="@(pips.Contains(i) ? "pip" : "")"></i>
-    }
+        1 => (0, 0),
+        6 => (0, 180),
+        3 => (0, -90),
+        4 => (0, 90),
+        2 => (-90, 0),
+        _ => (90, 0)   // 5
+    };
+}
+<span class="dice-cube-wrap @Model.Css" style="--delay:@(Model.Delay)ms" role="img" aria-label="Die showing @Model.Value">
+    <span class="dice-cube" style="--rx:@(rx)deg; --ry:@(ry)deg">
+        @for (int face = 1; face <= 6; face++)
+        {
+            var pips = PipsFor(face);
+            <span class="face f@(face)">
+                @for (int i = 0; i < 9; i++)
+                {
+                    <i class="@(pips.Contains(i) ? "pip" : "")"></i>
+                }
+            </span>
+        }
+    </span>
 </span>

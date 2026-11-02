@@ -1887,3 +1887,108 @@ a.new-campaign-card {
     height: 26%;
 }
 /* bottom-row islands no longer overlap */
+
+/* ===== Phase 9: live spectating ===== */
+.watch-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    padding: .3rem .8rem;
+    border-radius: 999px;
+    background: rgba(244,63,94,.1);
+    border: 1px solid rgba(244,63,94,.35);
+    color: var(--target-ink);
+    font-size: .85rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+    .watch-pill::before {
+        content: "\25CF";
+        animation: blink 1.4s infinite;
+    }
+
+.live-badge {
+    display: inline-block;
+    padding: .15rem .55rem;
+    border-radius: 6px;
+    background: var(--target);
+    color: #fff;
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+}
+
+.live-feed {
+    max-height: 420px;
+    overflow-y: auto;
+}
+
+.feed-item {
+    padding: .6rem .8rem;
+    border-radius: 12px;
+    background: #efe3d1;
+    font-size: .88rem;
+    animation: rise .35s ease both;
+}
+
+    .feed-item .who {
+        font-size: .7rem;
+        font-weight: 700;
+        letter-spacing: .06em;
+        color: var(--npc-ink);
+    }
+
+    .feed-item.feed-attack {
+        background: rgba(244,63,94,.1);
+        border: 1px solid rgba(244,63,94,.3);
+    }
+
+        .feed-item.feed-attack .who {
+            color: var(--target-ink);
+        }
+
+    .feed-item.feed-reinforce .who, .feed-item.feed-transfer .who {
+        color: var(--you-ink);
+    }
+
+.cheer {
+    position: fixed;
+    bottom: 80px;
+    z-index: 60;
+    padding: .35rem .9rem;
+    border-radius: 999px;
+    font-weight: 700;
+    pointer-events: none;
+    box-shadow: 0 6px 16px rgba(58,42,30,.18);
+    animation: cheer-up 2.6s ease-out forwards;
+}
+
+.cheer-go {
+    background: var(--you-soft);
+    color: var(--you-ink);
+    border: 1px solid var(--you);
+}
+
+.cheer-retreat {
+    background: #fdecc8;
+    color: var(--npc-ink);
+    border: 1px solid var(--npc);
+}
+
+@keyframes cheer-up {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(.8);
+    }
+
+    15% {
+        opacity: 1;
+        transform: none;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-260px) rotate(-4deg);
+    }
+}
