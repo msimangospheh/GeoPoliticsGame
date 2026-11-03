@@ -13,7 +13,7 @@
     int attLost = roll?.AttackerLosses ?? 0;
     int defLost = roll?.DefenderLosses ?? 0;
     int diceCount = roll?.AttackerDice.Count ?? 0;
-    int landed = diceCount * 150 + 800;   // ms until the last die has landed
+    int landed = diceCount * 150 + 1400;   // ms until the last die has landed
     ViewData["Title"] = $"The Battle for {def.CountryName}";
 }
 
@@ -45,11 +45,11 @@
                     <div class="shields">
                         @for (int i = 0; i < Math.Min(att.Soldiers, 15); i++)
                         {
-                            <span class="shield"></span>
+                            <partial name="_Soldier" model="(att.CountryCode, false, 0)" />
                         }
                         @for (int i = 0; i < attLost; i++)
                         {
-                            <span class="shield lost" style="--burst:@(landed + i * 120)ms"></span>
+                            <partial name="_Soldier" model="(att.CountryCode, true, landed + i * 120)" />
                         }
                     </div>
                 </div>
@@ -74,7 +74,7 @@
                             int delay = i * 150;
                             <div class="duel">
                                 <partial name="_Die" model="(a, aCss, delay)" />
-                                <span class="duel-text" style="animation-delay:@(delay + 800)ms">@text</span>
+                                <span class="duel-text" style="animation-delay:@(delay + 1400)ms">@text</span>
                                 <partial name="_Die" model="(d, dCss, delay + 60)" />
                             </div>
                         }
@@ -96,11 +96,11 @@
                     <div class="shields">
                         @for (int i = 0; i < Math.Min(def.Soldiers, 15); i++)
                         {
-                            <span class="shield"></span>
+                            <partial name="_Soldier" model="(def.CountryCode, false, 0)" />
                         }
                         @for (int i = 0; i < defLost; i++)
                         {
-                            <span class="shield lost" style="--burst:@(landed + i * 120)ms"></span>
+                            <partial name="_Soldier" model="(def.CountryCode, true, landed + i * 120)" />
                         }
                     </div>
                 </div>

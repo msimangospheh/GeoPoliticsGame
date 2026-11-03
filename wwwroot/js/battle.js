@@ -62,5 +62,5 @@
     });
 
     showLabel();
-    if (soundOn && document.querySelector('.die3d')) rattle();
+    if (soundOn && document.querySelector('.dice-cube')) rattle();
 })();

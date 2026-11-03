@@ -86,8 +86,8 @@ body {
     background: rgba(18, 13, 8, .38);
 }
 
-    .board::before { /* faint grid lines on the board */
-        background-image: linear-gradient(rgba(201,162,74,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(201,162,74,.12) 1px, transparent 1px);
+    .board::before, .board::after { /* no grid lines behind the countries */
+        background-image: none !important;
     }
 
 .island {
@@ -262,12 +262,15 @@ h1, h2, h3, .display {
 
 /* ---------- 7. 3D dice that visibly spin before they land ---------- */
 .dice-cube-wrap {
+    display: inline-block;   /* spans ignore width/height unless made blocks */
+    flex-shrink: 0;
     width: 52px;
     height: 52px;
     perspective: 600px;
 }
 
 .dice-cube {
+    display: block;
     position: relative;
     width: 52px;
     height: 52px;
@@ -291,6 +294,10 @@ h1, h2, h3, .display {
         backface-visibility: hidden;
     }
 
+    .dice-cube .face i {
+        display: block;
+    }
+
     .dice-cube .pip {
         width: 9px;
         height: 9px;
@@ -309,11 +316,9 @@ h1, h2, h3, .display {
 
 /* Spin several times, drop in, then settle on the rolled face */
 @keyframes cube-roll {
-    0% {
+    0% { /* no opacity here: fading a 3D element flattens it into one face */
         transform: translateY(-46px) rotateX(calc(var(--rx) + 1080deg)) rotateY(calc(var(--ry) + 720deg));
-        opacity: 0;
     }
-    10% { opacity: 1; }
     80% {
         transform: translateY(3px) rotateX(calc(var(--rx) - 8deg)) rotateY(calc(var(--ry) + 6deg));
     }
