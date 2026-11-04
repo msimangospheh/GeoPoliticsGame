@@ -424,3 +424,12 @@ h1, h2, h3, .display {
         transform: none !important;
     }
 }
+
+/* ---------- 10. Forgot password: the 6-digit code box ---------- */
+.otp-input {
+    font-family: var(--war-font);
+    font-size: 1.8rem;
+    letter-spacing: .5em;
+    text-align: center;
+    padding: .5rem .8rem;
+}

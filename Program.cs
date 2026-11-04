@@ -11,6 +11,9 @@ using GeoPolitics_Game.Services;
 using GeoPolitics_Game.Services.Npc;
 using GeoPolitics_Game.Services.Commentary;
 using GeoPolitics_Game.Hubs;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
+using GeoPolitics_Game.Services.Email;
 using MongoDB.Driver;
 
 MongoConventions.Register();   // must run BEFORE anything touches MongoDB
@@ -41,6 +44,23 @@ builder.Services.Configure<LlmSettings>(builder.Configuration.GetSection("Llm"))
 builder.Services.AddHttpClient<ICommentaryService, LlmCommentaryService>(client =>
 {
     client.Timeout = TimeSpan.FromSeconds(20);
+});
+// Email (password reset codes) through Brevo's HTTPS API
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Email"));
+builder.Services.AddHttpClient<IEmailService, BrevoEmailService>();
+
+// Limit "send me a code" to 3 requests per 10 minutes from the same IP address
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.OnRejected = async (context, token) =>
+    {
+        context.HttpContext.Response.ContentType = "text/plain";
+        await context.HttpContext.Response.WriteAsync("Too many code requests. Please wait 10 minutes and try again.", token);
+    };
+    options.AddPolicy("otp", http => RateLimitPartition.GetFixedWindowLimiter(
+        http.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+        _ => new FixedWindowRateLimiterOptions { PermitLimit = 3, Window = TimeSpan.FromMinutes(10) }));
 });
 
 // ---- Login: ASP.NET Identity, users stored in MongoDB ----
@@ -122,6 +142,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseRateLimiter();
 
 app.UseAuthentication();   // who are you?   (must come BEFORE authorization)
 app.UseAuthorization();    // are you allowed?

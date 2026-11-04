@@ -5,6 +5,7 @@
 
 <section class="auth-wrap">
     <div class="panel auth-card">
+        <partial name="_Messages" />
         <p class="eyebrow">Return to the war room</p>
         <h1 class="mb-4">Log in</h1>
 
@@ -18,7 +19,10 @@
                 <span asp-validation-for="Email" class="field-error"></span>
             </div>
             <div class="mb-3">
-                <label asp-for="Password" class="form-label"></label>
+                <div class="d-flex justify-content-between">
+                    <label asp-for="Password" class="form-label"></label>
+                    <a asp-controller="Password" asp-action="Forgot" class="small">Forgot password?</a>
+                </div>
                 <input asp-for="Password" class="form-control" autocomplete="current-password" />
                 <span asp-validation-for="Password" class="field-error"></span>
             </div>

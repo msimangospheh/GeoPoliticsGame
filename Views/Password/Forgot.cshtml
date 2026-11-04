@@ -1,0 +1,30 @@
+@model GeoPolitics_Game.ViewModels.ForgotPasswordViewModel
+@{
+    ViewData["Title"] = "Forgot password";
+}
+
+<section class="auth-wrap">
+    <div class="panel auth-card">
+        <p class="eyebrow">Locked out of the war room?</p>
+        <h1 class="mb-3">Forgot password</h1>
+        <p class="muted mb-4">Enter the email you signed up with. We'll send you a 6-digit code to set a new password.</p>
+
+        <form asp-action="Forgot" method="post" novalidate>
+            <div asp-validation-summary="ModelOnly"></div>
+
+            <div class="mb-4">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" autocomplete="email" autofocus />
+                <span asp-validation-for="Email" class="field-error"></span>
+            </div>
+
+            <button type="submit" class="btn btn-you w-100 py-2">Send me a code</button>
+        </form>
+
+        <p class="mt-3 mb-0 small">Remembered it? <a asp-controller="Account" asp-action="Login">Back to log in</a></p>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
