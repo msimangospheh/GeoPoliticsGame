@@ -15,6 +15,10 @@ using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 using GeoPolitics_Game.Services.Email;
 using GeoPolitics_Game.Services.Profile;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
 MongoConventions.Register();   // must run BEFORE anything touches MongoDB
@@ -30,6 +34,19 @@ builder.Services.AddSignalR();
 // ---- Database layer ----
 builder.Services.Configure<MongoSettings>(builder.Configuration.GetSection("MongoDb"));
 builder.Services.AddSingleton<MongoContext>();
+// Keep login keys in MongoDB so players stay logged in when the server restarts
+builder.Services.AddDataProtection().SetApplicationName("GeoPolitics");
+builder.Services.AddSingleton<IConfigureOptions<KeyManagementOptions>>(sp =>
+    new ConfigureOptions<KeyManagementOptions>(options =>
+        options.XmlRepository = new MongoXmlRepository(sp.GetRequiredService<MongoContext>())));
+
+// The host handles HTTPS and passes requests on; trust its "this was HTTPS" header
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 builder.Services.AddScoped<ICountryRepository, MongoCountryRepository>();
 builder.Services.AddScoped<IGameRepository, MongoGameRepository>();
 builder.Services.AddScoped<IGameEventRepository, MongoGameEventRepository>();
@@ -136,6 +153,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+app.UseForwardedHeaders();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");

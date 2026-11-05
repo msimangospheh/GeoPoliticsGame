@@ -112,6 +112,10 @@
         <a class="btn btn-you px-4" href="/Play/@g.Id/Ledger">Read the war ledger</a>
         <button type="button" class="btn btn-ghost px-4" data-copy-link>Share link</button>
         <a class="btn btn-attack px-4" asp-controller="Games" asp-action="New">New campaign</a>
+        @if (won)
+        {
+            <button type="button" class="btn btn-ghost px-4" data-celebrate>Celebrate again</button>
+        }
     </div>
 </div>
 
@@ -120,18 +124,6 @@
     @if (won)
     {
         <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.browser.min.js"></script>
-        <script>
-            // Two confetti cannons for 2.5 seconds (skipped automatically if "reduce motion" is on)
-            (function () {
-                if (typeof confetti !== 'function') return;
-                const colors = ['#10b981', '#f59e0b', '#f43f5e', '#c9a24a', '#3a2a1e'];
-                const end = Date.now() + 2500;
-                (function frame() {
-                    confetti({ particleCount: 4, angle: 60, spread: 60, origin: { x: 0 }, colors, disableForReducedMotion: true });
-                    confetti({ particleCount: 4, angle: 120, spread: 60, origin: { x: 1 }, colors, disableForReducedMotion: true });
-                    if (Date.now() < end) requestAnimationFrame(frame);
-                })();
-            })();
-        </script>
+            <script src="~/js/confetti-win.js" asp-append-version="true"></script>
     }
 }
