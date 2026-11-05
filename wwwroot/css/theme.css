@@ -433,3 +433,41 @@ h1, h2, h3, .display {
     text-align: center;
     padding: .5rem .8rem;
 }
+
+/* ---------- 11. Sound buttons in the header ---------- */
+.sound-controls {
+    display: flex;
+    gap: .35rem;
+}
+
+.sound-toggle {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, .05);
+    color: var(--ink);
+    transition: background .15s, color .15s;
+}
+
+    .sound-toggle:hover {
+        background: rgba(255, 255, 255, .12);
+    }
+
+    .sound-toggle svg {
+        width: 20px;
+        height: 20px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    /* Show the "on" drawing normally, the crossed-out one when switched off */
+    .sound-toggle .when-off { display: none; }
+    .sound-toggle.off { color: var(--ink-soft); opacity: .7; }
+    .sound-toggle.off .when-on { display: none; }
+    .sound-toggle.off .when-off { display: inline; }

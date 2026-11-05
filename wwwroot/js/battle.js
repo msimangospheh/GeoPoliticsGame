@@ -1,4 +1,5 @@
-﻿// Battle page: soldier counts tick down after the dice land, plus optional dice sounds
+// Battle page: soldier counts tick down after the dice land.
+// (Dice and soldier sounds are played by sound.js, timed to the animations.)
 (function () {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -20,47 +21,13 @@
         requestAnimationFrame(step);
     });
 
-    // ---- Dice sounds (off by default, remembered in this browser) ----
+    // ---- "Sounds: On/Off" button on the battle page (uses the game-wide setting) ----
     const toggle = document.querySelector('[data-sound-toggle]');
-    let soundOn = false;
-    try { soundOn = localStorage.getItem('diceSound') === 'on'; } catch { /* storage blocked */ }
-
-    function showLabel() {
-        if (toggle) toggle.textContent = soundOn ? 'Dice sounds: On' : 'Dice sounds: Off';
-    }
-
-    // A short "clatter" made from bursts of filtered noise - no sound files needed
-    function rattle() {
-        try {
-            const AudioCtx = window.AudioContext || window.webkitAudioContext;
-            if (!AudioCtx) return;
-            const ctx = new AudioCtx();
-            for (let i = 0; i < 6; i++) {
-                const when = ctx.currentTime + i * 0.07 + Math.random() * 0.03;
-                const buffer = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.03), ctx.sampleRate);
-                const data = buffer.getChannelData(0);
-                for (let j = 0; j < data.length; j++) data[j] = (Math.random() * 2 - 1) * (1 - j / data.length);
-
-                const source = ctx.createBufferSource();
-                source.buffer = buffer;
-                const filter = ctx.createBiquadFilter();
-                filter.type = 'bandpass';
-                filter.frequency.value = 2200 + Math.random() * 800;
-                const gain = ctx.createGain();
-                gain.gain.value = 0.25;
-                source.connect(filter).connect(gain).connect(ctx.destination);
-                source.start(when);
-            }
-        } catch { /* sound is optional */ }
-    }
-
-    toggle?.addEventListener('click', () => {
-        soundOn = !soundOn;
-        try { localStorage.setItem('diceSound', soundOn ? 'on' : 'off'); } catch { /* ignore */ }
+    if (toggle && window.GameSound) {
+        toggle.dataset.sound = 'none';
+        const showLabel = () => (toggle.textContent = GameSound.prefs().enabled ? 'Sounds: On' : 'Sounds: Off');
+        toggle.addEventListener('click', () => GameSound.setEnabled(!GameSound.prefs().enabled));
+        document.addEventListener('gamesound:change', showLabel);
         showLabel();
-        if (soundOn) rattle();
-    });
-
-    showLabel();
-    if (soundOn && document.querySelector('.dice-cube')) rattle();
+    }
 })();

@@ -1,4 +1,4 @@
-﻿// Plays the NPC moves back on the board, one at a time, at 1x / 2x / 4x speed.
+// Plays the NPC moves back on the board, one at a time, at 1x / 2x / 4x speed.
 // The server already decided everything - this only SHOWS what happened.
 (function () {
     const dataEl = document.getElementById('replay-data');
@@ -139,6 +139,9 @@
         data.events.slice(i + 1).filter(e => e.type === 'TurnStarted' && e.actor !== data.human).length;
 
     // ---- Play everything back ----
+    // Sounds for each kind of move (sound.js; silent if sound is off)
+    const sfx = (name, delayMs) => window.GameSound?.play(name, delayMs);
+
     async function play() {
         const total = data.events.length;
         for (let i = 0; i < total; i++) {
@@ -157,6 +160,7 @@
                     }
                     clearAttack();
                     strip.classList.add('d-none');
+                    sfx('npc');
                     await wait(700);
                     break;
 
@@ -166,6 +170,7 @@
                         floatText(code, `+${n}`);
                     });
                     addLogCard(e);
+                    sfx('pop');
                     await wait(1100);
                     break;
 
@@ -173,6 +178,7 @@
                     showAttack(e.from, e.to);
                     showStrip(`Live · ${p ? p.name : ''} · ${e.message}`);
                     addLogCard(e);
+                    sfx('attack');
                     await wait(1100);
                     break;
 
@@ -182,6 +188,8 @@
                     if (e.dLoss) floatText(e.to, `-${e.dLoss}`, true);
                     if (e.aLoss) floatText(e.from, `-${e.aLoss}`, true);
                     showStrip(`Live · ${e.message}`, e.aDice, e.dDice, e.commentary);
+                    sfx('dice');
+                    if (e.aLoss || e.dLoss) sfx('hit', 450);
                     await wait(e.commentary ? 1800 : 900);   // a little longer to read the commentary
                     break;
 
@@ -189,6 +197,7 @@
                     setOwner(e.to, e.actor);
                     setSoldiers(e.to, e.amount || 0);
                     floatText(e.to, 'Conquered!');
+                    sfx('conquer');
                     showStrip(`Live · ${e.message}`);
                     clearAttack();
                     await wait(1300);
@@ -197,6 +206,7 @@
                 case 'AttackFailed':
                 case 'Retreated':
                     showStrip(`Live · ${e.message}`);
+                    sfx('retreat');
                     addLogCard(e);
                     clearAttack();
                     await wait(1000);
@@ -207,6 +217,7 @@
                     setSoldiers(e.to, soldiersOf(e.to) + (e.amount || 0));
                     floatText(e.to, `+${e.amount}`);
                     addLogCard(e);
+                    sfx('march');
                     await wait(1000);
                     break;
 
@@ -219,6 +230,7 @@
                 case 'GameLost':
                 case 'GameWon':
                     showStrip(e.message);
+                    sfx(e.type === 'GameWon' ? 'victory' : e.type === 'GameLost' ? 'defeat' : 'conquer');
                     await wait(1800);
                     break;
 
