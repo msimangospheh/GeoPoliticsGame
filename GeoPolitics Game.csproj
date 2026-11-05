@@ -20,17 +20,6 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
-	<!-- Old prototype files: kept on disk for reference, not compiled -->
-	<ItemGroup>
-		<Compile Remove="Services\GameEngineService.cs" />
-		<Compile Remove="Services\NpcAIService.cs" />
-		<Content Remove="Views\Game\Setup.cshtml" />
-		<Content Remove="Views\Game\Start.cshtml" />
-		<None Include="Services\GameEngineService.cs" />
-		<None Include="Services\NpcAIService.cs" />
-		<None Include="Views\Game\Setup.cshtml" />
-		<None Include="Views\Game\Start.cshtml" />
-	</ItemGroup>
 	<!-- The test project lives in Tests\ and is built separately -->
 	<ItemGroup>
 		<Compile Remove="Tests\**" />
