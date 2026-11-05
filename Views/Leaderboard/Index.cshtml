@@ -1,0 +1,100 @@
+@model LeaderboardViewModel
+@{
+    ViewData["Title"] = "Leaderboard";
+    var me = Model.Me;
+}
+
+<div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4">
+    <div>
+        <p class="eyebrow">Hall of commanders</p>
+        <h1 class="mb-0">Leaderboard</h1>
+    </div>
+    @if (me != null)
+    {
+        <div class="panel my-rank">
+            <span class="muted small">Your rank</span>
+            <span class="display fs-3">#@me.Rank</span>
+            <span class="small">@me.Wins win@(me.Wins == 1 ? "" : "s") · @me.WinRate%</span>
+        </div>
+    }
+</div>
+
+<!-- Platform totals (the whole site, not just one player) -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3"><div class="panel stat-card"><div class="label">Campaigns finished</div><div class="value">@Model.Stats.FinishedGames</div></div></div>
+    <div class="col-6 col-lg-3"><div class="panel stat-card"><div class="label">World conquests</div><div class="value" style="color:var(--you-ink)">@Model.Stats.Victories</div></div></div>
+    <div class="col-6 col-lg-3"><div class="panel stat-card"><div class="label">Commanders ranked</div><div class="value">@Model.Stats.Commanders</div></div></div>
+    <div class="col-6 col-lg-3"><div class="panel stat-card"><div class="label">Fastest conquest</div><div class="value">@(Model.Stats.FastestWin?.ToString() ?? "–")</div><div class="label">@(Model.Stats.FastestWin.HasValue ? "rounds" : "no victories yet")</div></div></div>
+</div>
+
+<!-- Search and filter -->
+<div class="d-flex flex-wrap gap-3 justify-content-between align-items-center mb-3">
+    <form method="get" class="search-box">
+        <input type="hidden" name="difficulty" value="@Model.Difficulty" />
+        <input name="search" value="@Model.Search" class="form-control" maxlength="40" placeholder="Search commanders" />
+    </form>
+    <nav class="pill-group" aria-label="Filter by difficulty">
+        <a class="pill @(Model.Difficulty == null ? "active" : "")" asp-action="Index" asp-route-search="@Model.Search">All difficulties</a>
+        @foreach (var d in Enum.GetValues<Difficulty>())
+        {
+            <a class="pill @(Model.Difficulty == d ? "active" : "")" asp-action="Index" asp-route-difficulty="@d" asp-route-search="@Model.Search">@d</a>
+        }
+    </nav>
+</div>
+
+@if (Model.Rows.Count == 0)
+{
+    <div class="panel text-center py-5">
+        <p class="mb-2">@(string.IsNullOrWhiteSpace(Model.Search) ? "No finished campaigns yet." : "No commanders match that search.")</p>
+        <a class="btn btn-attack px-4" asp-controller="Games" asp-action="New">Start a campaign and claim the top spot</a>
+    </div>
+}
+else
+{
+    <div class="panel p-0 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table leader-table mb-0 align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col">Rank</th>
+                        <th scope="col">Commander</th>
+                        <th scope="col" class="text-end">Wins</th>
+                        <th scope="col" class="text-end">Played</th>
+                        <th scope="col" style="min-width:150px">Win rate</th>
+                        <th scope="col" class="text-end">Fastest win</th>
+                        <th scope="col" class="text-end d-none d-md-table-cell">Last campaign</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model.Rows)
+                    {
+                        var isMe = r.UserId == Model.CurrentUserId && Model.CurrentUserId != "";
+                        <tr class="@(isMe ? "me" : "")" style="animation-delay:@(Math.Min(r.Rank, 15) * 40)ms">
+                            <td>
+                                <span class="rank-badge @(r.Rank switch { 1 => "gold", 2 => "silver", 3 => "bronze", _ => "" })">@r.Rank</span>
+                            </td>
+                            <td>
+                                <span class="d-inline-flex align-items-center gap-2">
+                                    <span class="avatar">@(string.IsNullOrEmpty(r.ShortName) ? "?" : r.ShortName[..1].ToUpper())</span>
+                                    <strong>@r.Name</strong>
+                                    @if (isMe) { <span class="badge badge-you">You</span> }
+                                </span>
+                            </td>
+                            <td class="text-end display fs-5">@r.Wins</td>
+                            <td class="text-end">@r.Played</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="card-bar flex-grow-1"><span style="width:@(r.WinRate)%;background:var(--you)"></span></div>
+                                    <span class="small">@r.WinRate%</span>
+                                </div>
+                            </td>
+                            <td class="text-end">@(r.FastestWin.HasValue ? $"{r.FastestWin} rounds" : "–")</td>
+                            <td class="text-end small muted d-none d-md-table-cell">@(r.LastPlayed?.ToString("d MMM yyyy") ?? "–")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <p class="small muted mt-2">Ranked by wins, then win rate, then fastest conquest. Only finished campaigns count. Top @Model.Rows.Count shown.</p>
+}

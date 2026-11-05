@@ -9,6 +9,7 @@ namespace GeoPolitics_Game.Identity
     public class ApplicationUser : MongoIdentityUser<Guid>
     {
         public string DisplayName { get; set; } = string.Empty;   // "Sphe" -> shown as "Commander Sphe"
+        public UserPreferences Preferences { get; set; } = new();   // saved settings (Settings page)
     }
 
     [CollectionName("roles")]

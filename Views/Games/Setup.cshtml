@@ -1,7 +1,9 @@
 ﻿@model SetupViewModel
+@inject GeoPolitics_Game.Services.Profile.IPlayerProfileService Profiles
 @{
     ViewData["Title"] = "Rules & launch";
     var g = Model.Game;
+    var prefs = await Profiles.GetPreferencesAsync(User);
     var home = g.Territories.First(t => t.CountryCode == g.StartCountryCode);
     var rivals = g.Players.Where(p => !p.IsHuman)
                           .OrderByDescending(p => g.SoldierCount(p.Id))
@@ -66,7 +68,7 @@
                 @foreach (var d in Enum.GetValues<Difficulty>())
                 {
                     <label class="radio-card">
-                        <input type="radio" name="Difficulty" value="@d" @(d == Difficulty.Commander ? "checked" : "") />
+                        <input type="radio" name="Difficulty" value="@d" @(d == prefs.DefaultDifficulty ? "checked" : "") />
                         <span><strong>@d</strong><small>@ProfileInfo.DescribeDifficulty(d)</small></span>
                     </label>
                 }
@@ -77,14 +79,14 @@
                 @foreach (var v in ChroniclerVoices.All)
                 {
                     <label class="radio-card">
-                        <input type="radio" name="CommentatorVoice" value="@v" @(v == ChroniclerVoices.All[0] ? "checked" : "") />
+                        <input type="radio" name="CommentatorVoice" value="@v" @(v == prefs.DefaultVoice ? "checked" : "") />
                         <span><strong>@v</strong></span>
                     </label>
                 }
             </div>
 
             <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" name="AllowSpectators" value="true" id="allowSpectators" checked />
+                <input class="form-check-input" type="checkbox" name="AllowSpectators" value="true" id="allowSpectators" @(prefs.AllowSpectators ? "checked" : "") />
                 <label class="form-check-label" for="allowSpectators">Allow spectators with link</label>
             </div>
 

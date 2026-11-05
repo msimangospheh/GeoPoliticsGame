@@ -471,3 +471,106 @@ h1, h2, h3, .display {
     .sound-toggle.off { color: var(--ink-soft); opacity: .7; }
     .sound-toggle.off .when-on { display: none; }
     .sound-toggle.off .when-off { display: inline; }
+
+/* ---------- 12. Settings page ---------- */
+.settings-nav {
+    position: sticky;
+    top: 96px;
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
+    padding: .75rem;
+}
+
+    .settings-nav a {
+        padding: .55rem .8rem;
+        border-radius: 10px;
+        color: var(--ink-soft);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+        .settings-nav a:hover {
+            background: rgba(255, 255, 255, .08);
+            color: #fff;
+        }
+
+section[id] {
+    scroll-margin-top: 96px;   /* don't hide section titles under the sticky header */
+}
+
+.form-check-input {
+    background-color: rgba(255, 255, 255, .12);
+    border-color: var(--line);
+}
+
+    .form-check-input:checked {
+        background-color: var(--you);
+        border-color: var(--you);
+    }
+
+.form-range {
+    accent-color: var(--you);
+}
+
+.range-value {
+    font-family: var(--war-font);
+    color: var(--you-ink);
+}
+
+.form-control:disabled {
+    background: rgba(255, 255, 255, .04);
+    color: var(--ink-soft);
+}
+
+/* ---------- 13. Leaderboard ---------- */
+.my-rank {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: .7rem 1.4rem;
+    border-color: var(--you);
+}
+
+.leader-table {
+    --bs-table-color: var(--ink);
+    --bs-table-bg: transparent;
+    --bs-table-hover-bg: rgba(255, 255, 255, .05);
+}
+
+    .leader-table thead th {
+        font-size: .75rem;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+        color: var(--npc-ink);
+        border-bottom-color: var(--line);
+        padding: 1rem;
+    }
+
+    .leader-table td {
+        padding: .8rem 1rem;
+        border-color: rgba(201, 162, 74, .18);
+    }
+
+    .leader-table tbody tr {
+        animation: rise .5s ease both;
+    }
+
+        .leader-table tbody tr.me td {
+            background: rgba(138, 154, 75, .2);
+        }
+
+.rank-badge {
+    display: inline-grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    font-family: var(--war-font);
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+}
+
+    .rank-badge.gold { background: linear-gradient(135deg, #f3d77a, #b8892c); color: #2b1f15; border: 0; box-shadow: 0 0 14px rgba(201, 162, 74, .6); }
+    .rank-badge.silver { background: linear-gradient(135deg, #f1f1f1, #9aa0a6); color: #2b1f15; border: 0; }
+    .rank-badge.bronze { background: linear-gradient(135deg, #e3a978, #8a5a2b); color: #2b1f15; border: 0; }

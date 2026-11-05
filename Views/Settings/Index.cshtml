@@ -1,0 +1,151 @@
+@model SettingsViewModel
+@{
+    ViewData["Title"] = "Settings";
+    var p = Model.Preferences;
+}
+
+<div class="mb-4">
+    <p class="eyebrow">Commander's quarters</p>
+    <h1 class="mb-0">Settings</h1>
+</div>
+
+<partial name="_Messages" />
+
+<div class="row g-4">
+    <div class="col-lg-3">
+        <nav class="panel settings-nav">
+            <a href="#profile">Profile</a>
+            <a href="#defaults">Game defaults</a>
+            <a href="#sound">Sound</a>
+            <a href="#security">Security</a>
+        </nav>
+    </div>
+
+    <div class="col-lg-9 d-flex flex-column gap-4">
+
+        <!-- ===== Profile ===== -->
+        <section id="profile" class="panel">
+            <p class="eyebrow">Profile</p>
+            <h2 class="h4 mb-3">Your commander</h2>
+            <form asp-action="Profile" method="post" novalidate>
+                <div asp-validation-summary="ModelOnly"></div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input class="form-control" value="@Model.Email" disabled />
+                        <small class="muted">Your email is your login and can't be changed.</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Profile.DisplayName" class="form-label"></label>
+                        <input asp-for="Profile.DisplayName" class="form-control" maxlength="20" />
+                        <span asp-validation-for="Profile.DisplayName" class="field-error"></span>
+                        <small class="muted d-block">Shown as "Commander @Model.Profile.DisplayName" in games and on the leaderboard.</small>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-you mt-3 px-4">Save name</button>
+            </form>
+        </section>
+
+        <!-- ===== Game defaults + sound (one form) ===== -->
+        <form asp-action="Preferences" method="post" novalidate class="d-flex flex-column gap-4"
+              data-sound-settings data-apply="@(Model.ApplySoundNow ? "true" : "false")">
+            <section id="defaults" class="panel">
+                <p class="eyebrow">Game defaults</p>
+                <h2 class="h4 mb-1">New campaigns start with</h2>
+                <p class="muted mb-3">You can still change these on the "Rules &amp; launch" step.</p>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="Preferences.DefaultDifficulty" class="form-label"></label>
+                        <select asp-for="Preferences.DefaultDifficulty" class="form-select"
+                                asp-items="Html.GetEnumSelectList<Difficulty>()"></select>
+                        <span asp-validation-for="Preferences.DefaultDifficulty" class="field-error"></span>
+                        <small class="muted d-block">@ProfileInfo.DescribeDifficulty(p.DefaultDifficulty)</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Preferences.DefaultVoice" class="form-label"></label>
+                        <select asp-for="Preferences.DefaultVoice" class="form-select">
+                            @foreach (var v in ChroniclerVoices.All)
+                            {
+                                <option value="@v" selected="@(v == p.DefaultVoice)">@v</option>
+                            }
+                        </select>
+                        <span asp-validation-for="Preferences.DefaultVoice" class="field-error"></span>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check form-switch">
+                            <input asp-for="Preferences.AllowSpectators" class="form-check-input" role="switch" />
+                            <label asp-for="Preferences.AllowSpectators" class="form-check-label"></label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="sound" class="panel">
+                <p class="eyebrow">Sound</p>
+                <h2 class="h4 mb-1">Sound and music</h2>
+                <p class="muted mb-3">Move a slider to hear a preview. Saved to your account and applied in this browser.</p>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="form-check form-switch mb-2">
+                            <input asp-for="Preferences.SoundEnabled" class="form-check-input" role="switch" data-pref="enabled" />
+                            <label asp-for="Preferences.SoundEnabled" class="form-check-label"></label>
+                        </div>
+                        <label asp-for="Preferences.SoundVolume" class="form-label d-flex justify-content-between">
+                            <span>Effects volume</span><span class="range-value" data-show="SoundVolume">@p.SoundVolume%</span>
+                        </label>
+                        <input asp-for="Preferences.SoundVolume" type="range" min="0" max="100" step="5" class="form-range" data-pref="volume" />
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check form-switch mb-2">
+                            <input asp-for="Preferences.MusicEnabled" class="form-check-input" role="switch" data-pref="music" />
+                            <label asp-for="Preferences.MusicEnabled" class="form-check-label"></label>
+                        </div>
+                        <label asp-for="Preferences.MusicVolume" class="form-label d-flex justify-content-between">
+                            <span>Music volume</span><span class="range-value" data-show="MusicVolume">@p.MusicVolume%</span>
+                        </label>
+                        <input asp-for="Preferences.MusicVolume" type="range" min="0" max="100" step="5" class="form-range" data-pref="musicVolume" />
+                    </div>
+                </div>
+            </section>
+
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-you px-4">Save preferences</button>
+            </div>
+        </form>
+
+        <!-- ===== Security ===== -->
+        <section id="security" class="panel">
+            <p class="eyebrow">Security</p>
+            <h2 class="h4 mb-3">Change password</h2>
+            <form asp-action="Password" method="post" novalidate>
+                <div asp-validation-summary="ModelOnly"></div>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label asp-for="Password.CurrentPassword" class="form-label"></label>
+                        <input asp-for="Password.CurrentPassword" class="form-control" autocomplete="current-password" />
+                        <span asp-validation-for="Password.CurrentPassword" class="field-error"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Password.NewPassword" class="form-label"></label>
+                        <input asp-for="Password.NewPassword" class="form-control" autocomplete="new-password" />
+                        <span asp-validation-for="Password.NewPassword" class="field-error"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label asp-for="Password.ConfirmPassword" class="form-label"></label>
+                        <input asp-for="Password.ConfirmPassword" class="form-control" autocomplete="new-password" />
+                        <span asp-validation-for="Password.ConfirmPassword" class="field-error"></span>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3">
+                    <a asp-controller="Password" asp-action="Forgot" class="small">Forgot your current password?</a>
+                    <button type="submit" class="btn btn-you px-4">Change password</button>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/settings.js" asp-append-version="true"></script>
+}

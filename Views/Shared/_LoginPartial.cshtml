@@ -2,10 +2,10 @@
 {
     var name = User.GetDisplayName();
     <div class="d-flex align-items-center gap-2">
-        <span class="user-chip">
+        <a class="user-chip text-decoration-none" asp-controller="Settings" asp-action="Index" title="Settings">
             <span class="avatar">@(string.IsNullOrEmpty(name) ? "?" : name[..1].ToUpper())</span>
             Commander @name
-        </span>
+        </a>
         <form asp-controller="Account" asp-action="Logout" method="post" class="m-0">
             <button type="submit" class="btn btn-ghost btn-sm">Log out</button>
         </form>

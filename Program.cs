@@ -14,6 +14,7 @@ using GeoPolitics_Game.Hubs;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 using GeoPolitics_Game.Services.Email;
+using GeoPolitics_Game.Services.Profile;
 using MongoDB.Driver;
 
 MongoConventions.Register();   // must run BEFORE anything touches MongoDB
@@ -39,6 +40,8 @@ builder.Services.AddSingleton<IRandomSource, SecureRandomSource>();
 builder.Services.AddSingleton<IGameEngine, GameEngine>();
 builder.Services.AddScoped<INpcPlayer, NpcBrain>();   // NPCs that play to win
 builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<ILeaderboardRepository, MongoLeaderboardRepository>();
+builder.Services.AddScoped<IPlayerProfileService, PlayerProfileService>();
 // ---- AI Chronicler (any OpenAI-compatible API; Groq's free tier by default) ----
 builder.Services.Configure<LlmSettings>(builder.Configuration.GetSection("Llm"));
 builder.Services.AddHttpClient<ICommentaryService, LlmCommentaryService>(client =>
