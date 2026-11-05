@@ -259,4 +259,4 @@ Email is sent through Brevo's HTTPS API because Render's free plan blocks outgoi
 - Confetti: [canvas-confetti](https://github.com/catdad/canvas-confetti)
 - Country population data seeded into `Data/Seed/countries.json`
 - Background and icon artwork supplied by the author; world map, sounds and stick soldiers created for this project
-- Author: _[Siphemandla Thembeka Simango, SMNSIP002]_
+- Author: Siphemandla Thembeka Simango, SMNSIP002
